@@ -1,0 +1,48 @@
+# Example configuration for goclaw-setup-my-pc
+# This is a template. Real secrets must live in .env
+
+agent:
+  name: setup-my-pc
+  language: ru          # ru | en
+  safety: strict        # always require confirmation for dangerous actions
+
+models:
+  default: cloud
+  cloud:
+    preferred:
+      - grok-4.5
+      - qwen-3.8
+      - minimax-m2.7
+  local:
+    enabled: true
+    only_when_offline: true
+    endpoint: http://127.0.0.1:8080/v1   # Fabric OpenAI-compatible
+    model: qwen3.5-9b-q4_k_m
+
+wrappers:
+  common: prompts/system-common.md
+  grok: prompts/wrappers/grok.md
+  qwen_cloud: prompts/wrappers/qwen-cloud.md
+  minimax: prompts/wrappers/minimax.md
+  qwen_local: prompts/wrappers/qwen-local.md
+
+skills:
+  directory: skills/
+  enabled:
+    - local-docs
+    - safety-confirm
+    - openwrt
+    - fabric-offline
+    - pc-setup
+    - model-router
+    - backup
+    - network-vpn
+    - coding-quality
+
+docs:
+  root: docs/
+  priority: local_first
+
+safety:
+  require_confirmation: true
+  openwrt_backup_first: true
