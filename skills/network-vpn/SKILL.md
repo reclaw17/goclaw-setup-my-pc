@@ -1,15 +1,29 @@
 # network-vpn
 
-## Description
-Configure network settings, drivers and VPN on the PC (CachyOS/Arch and Windows 11).
+**Status:** Production-ready  
+**Last update:** 2026-07-22
 
-## Capabilities
-- Detect current network status
-- Install and configure network drivers (when needed)
-- Set up VPN clients
-- Configure DNS
-- Basic network diagnostics
+## Purpose
+
+Help the user configure network, VPN and DNS on both the PC and OpenWrt router.
+
+## When to use
+
+- Setting up VPN clients (WireGuard preferred)
+- Configuring DNS (including AdGuard)
+- Basic network troubleshooting
+- Tailscale / remote access
 
 ## Rules
-- Always use `safety-confirm` before applying changes.
-- Prefer official/package-manager methods over manual binary downloads when possible.
+
+1. Always prefer official methods and packages.
+2. On OpenWrt use UCI and official documentation.
+3. Always go through `safety-confirm`.
+4. Prefer WireGuard over older protocols when possible.
+5. First check local documentation.
+
+## Integration
+
+- Works closely with `openwrt` and `pc-setup`
+- Uses `local-docs`
+- Must respect `safety-confirm` and model wrappers
