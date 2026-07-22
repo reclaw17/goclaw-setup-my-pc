@@ -1,26 +1,31 @@
 # model-router
 
-## Description
-Automatically chooses between cloud models and the local Fabric model.
+**Status:** Production-ready  
+**Last update:** 2026-07-22
 
-## Models
+## Purpose
+Select the correct model **and** its corresponding wrapper (harness).
 
-### Cloud (primary)
-- Grok 4.5
-- Qwen 3.8
-- Minimax M2.7
+## Decision logic
+1. If internet is available → use one of the cloud models (Grok 4.5 / Qwen 3.8 / Minimax M2.7) + matching wrapper.
+2. If internet is unavailable → switch to local Qwen3.5-9B + `wrapper-qwen-local.md` via Fabric.
+3. Always inform the user about the current mode and active model.
 
-### Local (fallback only)
-- **Qwen3.5-9B** (Q4_K_M or Q5_K_M)
-- Location on USB: `models/qwen3.5-9b-q4_k_m.gguf`
+## Wrapper mapping
+| Model              | Wrapper file                     |
+|--------------------|----------------------------------|
+| Grok 4.5           | prompts/wrappers/grok.md         |
+| Qwen 3.8           | prompts/wrappers/qwen-cloud.md   |
+| Minimax M2.7       | prompts/wrappers/minimax.md      |
+| Qwen3.5-9B (local) | prompts/wrappers/qwen-local.md   |
 
-## Logic
-1. Check internet availability.
-2. If internet is available → use cloud models.
-3. If internet is unavailable → start Fabric + load Qwen3.5-9B and inform the user.
-4. When internet returns → prefer switching back to cloud models.
+All wrappers are combined with `prompts/system-common.md`.
 
 ## Rules
-- Always tell the user which mode is currently active (online / offline).
-- Local model is strictly a fallback.
-- Do not load the local model if cloud is available.
+- Local model is **only** a fallback.
+- When switching models, switch the wrapper at the same time.
+- Never hide the current mode from the user.
+
+## Integration
+- Controls `fabric-offline`
+- Works with all other skills
