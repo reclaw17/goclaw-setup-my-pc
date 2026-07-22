@@ -1,61 +1,49 @@
 # USB Flash Drive Structure
 
-Структура флешки / USB structure for the portable agent.
+Production structure for the portable agent.
 
 ```
 USB:/
 │
-├── goclaw/                     ← сам агент (бинарники + UI)
+├── goclaw/                     ← binaries (downloaded from release / fork on first run or by setup script)
 │   ├── goclaw-linux
-│   ├── goclaw-windows.exe
-│   └── ...
+│   └── goclaw-windows.exe
 │
-├── fabric/                     ← локальный движок моделей (offline)
+├── fabric/                     ← Fabric binaries (from QVAC / fork)
 │   ├── fabric-linux
-│   ├── fabric-windows.exe
-│   └── ...
+│   └── fabric-windows.exe
 │
-├── models/                     ← локальные модели (GGUF)
-│   └── qwen3.5-9b.gguf         ← или другая подходящая модель (~8 GB VRAM)
+├── models/                     ← empty by default
+│   └── qwen3.5-9b-q4_k_m.gguf  ← auto-downloaded on first offline launch
 │
-├── docs/                       ← локальная offline-документация
+├── docs/                       ← offline documentation
 │   ├── openwrt/
 │   ├── cachyos-arch/
 │   ├── windows11/
 │   ├── adguard/
 │   ├── amnezia/
-│   └── custom/                 ← пользовательские документы
+│   └── custom/
 │
-├── skills/                     ← навыки агента
-│   ├── local-docs/
-│   ├── safety-confirm/
-│   ├── openwrt/
-│   ├── network-vpn/
-│   ├── coding-quality/
-│   ├── model-router/
-│   ├── backup/
-│   └── ...
+├── skills/
+├── prompts/
+│   ├── system-common.md
+│   └── wrappers/
 │
-├── config/                     ← настройки
-│   ├── settings.json
-│   └── ...
-│
-├── launcher/                   ← скрипты запуска
+├── config/
+├── launcher/
 │   ├── start-linux.sh
 │   ├── start-windows.bat
-│   └── ...
+│   ├── bootstrap.md
+│   └── FIRST-RUN.md
 │
-├── .env                        ← секреты (НЕ коммитить!)
+├── .env                        ← secrets (never in git)
 ├── .env.example
-│
-└── README.txt                  ← короткая инструкция
+└── README.txt
 ```
 
-## How it works
+## Key principles
 
-1. Insert the USB drive
-2. Run the appropriate launcher (`start-linux.sh` or `start-windows.bat`)
-3. The agent checks for internet
-4. Online → cloud models
-5. Offline → starts Fabric + local model from the USB
-6. Always asks for confirmation before system-changing actions
+1. **Binaries** are obtained via controlled downloads from official/forked releases (not stored in git).
+2. **Model** is auto-downloaded on first launch when missing (QVAC-style).
+3. Git repository stays light.
+4. After first successful offline run the model stays on the USB for future use.
