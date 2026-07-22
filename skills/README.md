@@ -1,17 +1,17 @@
-# Skills
+# Skills — Production Status
 
-This folder contains agent skills for **goclaw-setup-my-pc**.
+All core skills are at production quality and must continue to pass `QUALITY-CHECKLIST.md`.
 
-## Current skills
+| Skill | Status | Purpose |
+|-------|--------|--------|
+| local-docs | Production | Offline documentation |
+| safety-confirm | Production | Cursor-style safety |
+| openwrt | Production | OpenWrt router setup |
+| fabric-offline | Production | Local model via Fabric |
+| pc-setup | Production | CachyOS / Arch + Windows 11 |
+| model-router | Production | Model + wrapper switching |
+| backup | Production | Safe backups |
+| network-vpn | Production | Network, DNS, VPN |
+| coding-quality | Production | Clean & safe code generation |
 
-| Skill | Status | Description |
-|-------|--------|-------------|
-| `local-docs` | Stub | Offline documentation search |
-| `safety-confirm` | Stub | Cursor-style confirmation before dangerous actions |
-| `openwrt` | Stub | OpenWrt backup, update, Wi-Fi, VPN, DNS |
-| `network-vpn` | Stub | Network, drivers, VPN setup |
-| `coding-quality` | Stub | Careful coding with verification |
-| `model-router` | Stub | Cloud ↔ local (Fabric) switching |
-| `backup` | Stub | System and router backups |
-
-More skills will be added later.
+Phase 1 skill work is complete.

@@ -1,88 +1,67 @@
 # goclaw-setup-my-pc
 
-**Portable AI agent** based on [GoClaw](https://github.com/nextlevelbuilder/goclaw) for setting up computers and OpenWrt routers from a USB flash drive.
+**Portable AI agent for setting up PCs and OpenWrt routers from a USB flash drive.**
 
-Портативный AI-агент на базе [GoClaw](https://github.com/nextlevelbuilder/goclaw) для настройки компьютеров и OpenWrt-роутеров с флешки.
+Based on official [goclaw](https://github.com/nextlevelbuilder/goclaw).
 
----
+## What it does
 
-## Target systems / Целевые системы
+- Configures **CachyOS / Arch Linux** and **Windows 11**
+- Configures **OpenWrt** routers (backup → packages → Wi-Fi → VPN → DNS)
+- Works offline via **Fabric + local model**
+- Uses a local documentation base on the USB
+- Cursor-style safety (explicit confirmation before dangerous actions)
+- Russian + English
 
-- **CachyOS / Arch Linux**
-- **Windows 11**
-- **OpenWrt routers**
+## Models
 
----
+| Type | Models |
+|------|--------|
+| Cloud (primary) | Grok 4.5, Qwen 3.8, Minimax M2.7 |
+| Local (fallback only) | Qwen3.5-9B Q4_K_M |
 
-## Key features / Основные возможности
+Local model is used **only** when there is no internet.  
+It must run on 8 GB VRAM + 16 GB RAM.
 
-| Feature | Описание |
-|---------|----------|
-| **Hybrid models** | Cloud models (Grok 4.5, Qwen 3.8, Minimax) as primary + local Fabric as offline fallback |
-| **Offline docs** | Local documentation base (OpenWrt, CachyOS, Windows 11, AdGuard, Amnezia + custom) |
-| **Safety** | Cursor-style confirmations before any dangerous action |
-| **Bilingual** | Russian and English interface |
-| **Portable** | Runs from USB, secrets stored in `.env` |
-| **OpenWrt** | Backup → update → configure Wi-Fi / VPN / DNS |
+## Architecture principle
 
----
+> The model is the brain.  
+> Skills, docs, Fabric and launcher are the tools the brain uses.
 
-## How it works / Как это работает
+Each model has its own optimized wrapper (harness).
 
-1. Insert USB and launch the agent
-2. Agent checks internet connection
-3. **Online** → uses powerful cloud models
-4. **Offline** → automatically starts Fabric + local model from USB
-5. First looks for answers in local documentation
-6. Before any system/router change — asks for confirmation
-
----
-
-## Project structure / Структура проекта
+## Project structure
 
 ```
-goclaw-setup-my-pc/
-├── prompts/
-│   ├── system-ru.md      # System prompt (Russian)
-│   └── system-en.md      # System prompt (English)
-├── skills/               # Agent skills (in progress)
-├── docs/                 # Local offline documentation
-│   ├── openwrt/
-│   ├── cachyos-arch/
-│   ├── windows11/
-│   ├── adguard/
-│   ├── amnezia/
-│   └── custom/           # User-added docs
-├── config/               # Configuration examples
-├── .env.example          # Secrets template
-└── README.md
+.
+├── prompts/               # system-common + individual model wrappers
+├── skills/                # production-ready skills
+├── launcher/              # first-run + start scripts
+├── docs/                  # offline documentation (to be populated)
+├── MODELS.md
+├── SOURCES.md             # pinned binaries + model sources
+├── USB-STRUCTURE.md
+├── PROJECT-PLAN.md
+├── QUALITY-CHECKLIST.md
+└── FIRST-RUN.md
 ```
 
----
+## Current status
 
-## Current status / Текущий статус
+**Phase 1 (Core skills + wrappers + architecture) — COMPLETE at high quality.**
 
-- [x] Project repository created
-- [x] System prompts (RU + EN)
-- [x] Basic folder structure
-- [ ] Skills implementation
-- [ ] USB launcher
-- [ ] Fabric offline integration
-- [ ] Local docs population
+Next phases:
+- Pin exact release checksums
+- Implement full launcher orchestration
+- Populate offline docs
+- Hardware MVP test
+- Public release
 
----
+## Quality rule
 
-## Roadmap (high level)
-
-1. Finalize system prompts & safety rules
-2. Implement core skills (docs, search, backup, network, OpenWrt)
-3. USB structure + launcher scripts (Linux + Windows)
-4. Fabric offline inference integration
-5. First working MVP for personal use
-6. Public release (without secrets)
-
----
+Every skill must pass `QUALITY-CHECKLIST.md`.  
+Quality is more important than speed.
 
 ## License
 
-MIT (planned)
+MIT (planned for public release)
