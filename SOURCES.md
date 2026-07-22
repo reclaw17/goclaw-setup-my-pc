@@ -1,50 +1,32 @@
 # Sources — Binaries & Model
 
-**Status:** Production policy defined  
-**Last update:** 2026-07-22
+**Status:** Production pins (model complete, binaries pending exact assets)
 
-## Strategy
+## 1. Local Model (pinned)
 
-### 1. Binaries via pinned releases / fork
-- **goclaw** → official releases from `nextlevelbuilder/goclaw` (or our controlled fork)
-- **Fabric** → pinned release from QVAC / fabric-llm.cpp (or controlled fork)
+| Field | Value |
+|------|--------|
+| Model | Qwen3.5-9B |
+| Quantization | Q4_K_M |
+| Filename on USB | `models/qwen3.5-9b-q4_k_m.gguf` |
+| URL | `https://huggingface.co/unsloth/Qwen3.5-9B-GGUF/resolve/main/Qwen3.5-9B-Q4_K_M.gguf` |
+| SHA256 | `03b74727a860a56338e042c4420bb3f04b2fec5734175f4cb9fa853daf52b7e8` |
+| Approx. size | 5.68 GB |
 
-Large binaries are **never** committed to git.  
-They are fetched during USB preparation or on first run.
+**Behaviour:** On first launch, if the file is missing, the launcher downloads it, verifies the SHA256, and keeps it on the USB forever.
 
-### 2. Model via auto-download (first run)
-- Model name: **Qwen3.5-9B** (or closest high-quality equivalent available at the time of pinning)
-- Quantization: **Q4_K_M** (preferred) or Q5_K_M if stable on 8 GB VRAM
-- Target path on USB: `models/qwen3.5-9b-q4_k_m.gguf`
-- Behaviour:
-  1. Check if file exists
-  2. If missing → download from pinned URL
-  3. Verify SHA256
-  4. Keep permanently on the USB for future launches
+## 2. Binaries (policy)
 
-## Required pins (must be filled before public release)
+- **goclaw** → official releases from `nextlevelbuilder/goclaw` (or controlled fork)
+- **Fabric** → releases from `tetherto/qvac-fabric-llm.cpp` (or controlled fork)
 
-```text
-# Binaries
-GOCLAW_RELEASE_URL_LINUX=
-GOCLAW_RELEASE_URL_WINDOWS=
-GOCLAW_SHA256_LINUX=
-GOCLAW_SHA256_WINDOWS=
+Exact asset names + SHA256 will be pinned here as soon as the chosen release is verified.
 
-FABRIC_RELEASE_URL_LINUX=
-FABRIC_RELEASE_URL_WINDOWS=
-FABRIC_SHA256_LINUX=
-FABRIC_SHA256_WINDOWS=
+Until then the launcher must fail safely with a clear message instead of downloading from an untrusted source.
 
-# Model
-MODEL_URL=
-MODEL_SHA256=
-MODEL_FILENAME=qwen3.5-9b-q4_k_m.gguf
-MODEL_EXPECTED_SIZE_GB=≈4.5–6
-```
+## 3. Safety rules
 
-## Safety rules
-- Never download from an unpinned / untrusted URL.
-- Always verify checksum before use.
-- If download fails or checksum mismatches → stop with a clear message to the user.
-- Prefer official Hugging Face / GitHub release assets.
+- Never download from an unpinned URL
+- Always verify SHA256 before use
+- If checksum mismatches → stop and inform the user
+- Prefer official GitHub Releases / Hugging Face
