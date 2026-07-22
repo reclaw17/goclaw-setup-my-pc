@@ -1,6 +1,6 @@
 # Project Plan — goclaw-setup-my-pc
 
-**Version:** 1.1 (production-ready)  
+**Version:** 1.2 (production-ready)  
 **Last update:** 2026-07-22  
 **Principle:** Quality over speed. No stage is considered complete until it passes the quality gates.
 
@@ -25,11 +25,61 @@ Create a **portable AI agent** based on the official [goclaw](https://github.com
 
 ---
 
-## 2. Success Criteria (Definition of Done)
+## 2. Core Architecture Insight
+
+**The model is the brain of the agent.**
+
+Everything else exists to serve the model:
+- Skills = tools the brain can use
+- Local docs = knowledge the brain can read
+- Fabric = offline body for the local brain
+- Launcher = way to start the brain
+- Safety rules = constraints the brain must obey
+
+Therefore we optimize the brain first (good models + good individual harnesses).
+
+---
+
+## 3. Models + Individual Wrappers (Harnesses)
+
+### Models
+
+**Cloud (primary):**
+1. Grok 4.5
+2. Qwen 3.8
+3. Minimax M2.7
+
+**Local (fallback only):**
+- **Qwen3.5-9B** (Q4_K_M preferred)
+- Used **only** when there is no internet
+- Must run on 8 GB VRAM + 16 GB RAM
+
+### Individual Model Wrappers (new)
+
+Each model gets its **own harness / system prompt wrapper**.
+
+When the model is switched, the wrapper is also switched automatically by `model-router`.
+
+```
+prompts/
+├── system-common.md          ← shared safety rules (all models)
+├── wrapper-grok.md           ← optimized for Grok 4.5
+├── wrapper-qwen-cloud.md     ← optimized for Qwen 3.8
+├── wrapper-minimax.md        ← optimized for Minimax M2.7
+└── wrapper-qwen-local.md     ← short & strict for Qwen3.5-9B
+```
+
+This is inspired by AutoGen patterns and modern harness research (AIDE² etc.).
+
+**Why:** Different models have different strengths. A tailored wrapper extracts maximum quality from each brain.
+
+---
+
+## 4. Success Criteria (Definition of Done)
 
 ### MVP is successful when:
 1. Agent starts from USB on Linux and Windows with one command/click
-2. Correctly switches between cloud and local model (Fabric)
+2. Correctly switches between cloud and local model (Fabric) **and** loads the matching wrapper
 3. Asks for confirmation before any system/router change
 4. Can create OpenWrt backup and perform basic safe configuration
 5. Can answer basic questions from local `docs/` without internet
@@ -40,21 +90,7 @@ Create a **portable AI agent** based on the official [goclaw](https://github.com
 
 ---
 
-## 3. Models
-
-### Cloud (primary)
-1. Grok 4.5
-2. Qwen 3.8
-3. Minimax M2.7
-
-### Local (fallback only)
-- **Qwen3.5-9B** (quantization Q4_K_M preferred, Q5_K_M acceptable)
-- Must run confidently on 8 GB VRAM + 16 GB system RAM
-- Used **only** when there is no internet
-
----
-
-## 4. Quality Principles (mandatory)
+## 5. Quality Principles (mandatory)
 
 1. Every skill must pass `QUALITY-CHECKLIST.md` before being marked ready
 2. Dangerous actions always require explicit user confirmation
@@ -64,21 +100,22 @@ Create a **portable AI agent** based on the official [goclaw](https://github.com
 6. Better 5 high-quality skills than 15 weak stubs
 7. We never skip stages
 8. User has zero development experience → everything must stay simple and transparent
+9. Model = brain → we invest in good wrappers for each model
 
 ---
 
-## 5. Current Honest Status
+## 6. Current Honest Status
 
 | Component                        | Status     | Quality  | Notes |
 |----------------------------------|------------|----------|-------|
-| System prompts (RU + EN)         | Done       | Good     | Solid |
+| System prompts (RU + EN)         | Done       | Good     | Will become system-common + wrappers |
 | USB-STRUCTURE.md                 | Done       | Good     | Clear |
 | QUALITY-CHECKLIST.md             | Done       | Good     | Mandatory |
 | MODELS.md                        | Done       | Good     | Fixed local model |
 | openwrt skill                    | Done       | Good     | Best skill so far |
 | local-docs skill                 | Partial    | Medium   | Needs strengthening from chip-docs-local |
 | safety-confirm skill             | Partial    | Medium   | Needs strengthening |
-| backup / network-vpn / coding    | Stubs      | Low      | Require full rewrite |
+| Model wrappers                   | Missing    | —        | New priority |
 | fabric-offline skill             | Missing    | —        | Critical |
 | pc-setup skill                   | Missing    | —        | Critical |
 | Launcher scripts                 | Missing    | —        | |
@@ -87,21 +124,24 @@ Create a **portable AI agent** based on the official [goclaw](https://github.com
 
 ---
 
-## 6. Phased Plan with Quality Gates
+## 7. Phased Plan with Quality Gates
 
-### Phase 1 — Quality of Core Skills (CURRENT)
+### Phase 1 — Quality of Core Skills + Model Wrappers (CURRENT)
 
-**Goal:** Bring the most important skills to high quality.
+**Goal:** Bring the most important skills and model harnesses to high quality.
 
 Order of work:
-1. **local-docs** — base on `chip-docs-local`, make it as close as possible to the original while adding USB + offline priority
-2. **safety-confirm** — raise to real Cursor-style level
-3. **openwrt** — polish the already good skill against the checklist
-4. **fabric-offline** — create carefully (sidecar, 8 GB VRAM, model load/unload)
-5. **pc-setup** — create (CachyOS/Arch + Windows 11)
+1. Create structure of individual model wrappers (`wrapper-*.md`)
+2. **local-docs** — base on `chip-docs-local`
+3. **safety-confirm** — raise to real Cursor-style level
+4. Polish **openwrt** against the checklist
+5. **fabric-offline** — create carefully
+6. **pc-setup** — create (CachyOS/Arch + Windows 11)
 
 **Exit criteria (Quality Gate):**  
-All five skills pass every item of `QUALITY-CHECKLIST.md` without exceptions.
+- All listed skills pass every item of `QUALITY-CHECKLIST.md`
+- Each of the 4 models has its own tested wrapper
+- model-router correctly switches both model and wrapper
 
 Only after this gate is closed → Phase 2.
 
@@ -112,10 +152,10 @@ Only after this gate is closed → Phase 2.
 - Fabric as portable sidecar (Linux + Windows binaries)
 - Model: Qwen3.5-9B Q4_K_M
 - Correct online/offline detection and user notification
-- Memory-aware load/unload behaviour
+- Automatic switch of wrapper when falling back to local model
 
 **Exit criteria:**  
-Agent successfully falls back to local model when internet is unavailable and returns to cloud when internet appears.
+Agent successfully falls back to local model + correct local wrapper when internet is unavailable.
 
 ---
 
@@ -135,12 +175,7 @@ One-click / one-command start from USB on both target operating systems.
 
 ### Phase 4 — Local Knowledge Base
 
-- Populate `docs/` with high-quality offline documentation:
-  - OpenWrt
-  - CachyOS / Arch Linux
-  - Windows 11
-  - AdGuard Home / VPN / DNS
-  - Amnezia Premium
+- Populate `docs/` with high-quality offline documentation
 - Support user-added documents in `docs/custom/`
 - Use the chip-docs-local approach
 
@@ -151,12 +186,7 @@ Agent can answer the most common practical questions about target systems withou
 
 ### Phase 5 — MVP Testing
 
-Real-world testing on actual hardware:
-- Basic PC setup (Linux + Windows)
-- OpenWrt backup + safe configuration
-- Offline mode
-- Safety confirmations
-- Language switching
+Real-world testing on actual hardware.
 
 **Exit criteria:**  
 Agent helps the user complete real tasks without critical errors or unsafe behaviour.
@@ -168,43 +198,43 @@ Agent helps the user complete real tasks without critical errors or unsafe behav
 - Remove all secrets
 - Final README (bilingual)
 - MIT License
-- Clean repository
 - Public GitHub release
 
 ---
 
-## 7. Dependencies & Constraints
+## 8. Dependencies & Constraints
 
 - Hardware target for local models: ≥ 8 GB VRAM + 16 GB system RAM
-- Inference engine: Fabric (qvac-fabric-llm.cpp) as OpenAI-compatible server
+- Inference engine: Fabric as OpenAI-compatible server
 - Local model: Qwen3.5-9B Q4_K_M
-- Secrets: only in `.env` (never committed)
-- User skill level: zero development experience → we lead, keep everything simple
-- Platform: goclaw (official repo) + our skills + Fabric
+- Secrets: only in `.env`
+- User skill level: zero development experience
+- Platform: goclaw + our skills + Fabric + model-specific wrappers
 
 ---
 
-## 8. Risks and Mitigations
+## 9. Risks and Mitigations
 
 | Risk | Impact | Mitigation |
 |------|--------|------------|
-| Local model too large for USB | High | Qwen3.5-9B Q4_K_M is chosen as the balanced option |
-| Fabric compatibility with different GPUs | Medium | Prefer Vulkan + CPU fallback; test on real hardware early |
-| User has no coding experience | High | Keep all decisions transparent, write simple scripts, never assume knowledge |
-| Skills become inconsistent | Medium | Strict use of QUALITY-CHECKLIST.md + single source of truth |
+| Local model too large for USB | High | Qwen3.5-9B Q4_K_M is chosen |
+| Different models need different styles | Medium | Individual wrappers |
+| Fabric compatibility | Medium | Prefer Vulkan + CPU fallback |
+| User has no coding experience | High | Keep everything simple and transparent |
 | Scope creep | High | Explicit non-goals + phase gates |
 
 ---
 
-## 9. Working Rules
+## 10. Working Rules
 
 1. Always work **in order**. Never skip phases.
 2. A skill is not “done” until it passes the full QUALITY-CHECKLIST.md.
 3. Prefer strong originals from the archive → minimal necessary adaptation.
-4. Document every important decision in the repository.
-5. Quality is non-negotiable.
+4. Model = brain → invest in good individual wrappers.
+5. Document every important decision in the repository.
+6. Quality is non-negotiable.
 
 ---
 
 **Next concrete action:**  
-Start Phase 1 by improving `local-docs` on the base of the original `chip-docs-local`.
+Start Phase 1 by creating the structure of individual model wrappers + improving `local-docs`.
