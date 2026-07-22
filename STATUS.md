@@ -1,33 +1,21 @@
 # Project Status
 
 **Date:** 2026-07-22  
-**Principle:** Quality over speed. Model = brain.
+**Phase:** End of Phase 1 → beginning of Phase 2/3 preparation
 
 ## Completed at high quality
-
-- Architecture (model = brain + individual wrappers)
-- System prompts + 4 model wrappers
-- Core skills: local-docs, safety-confirm, openwrt, fabric-offline, pc-setup, model-router
+- Architecture (model = brain)
+- Individual model wrappers
+- Core skills (local-docs, safety-confirm, openwrt, fabric-offline, pc-setup, model-router)
 - PROJECT-PLAN, QUALITY-CHECKLIST, MODELS, USB-STRUCTURE
-- First-run strategy:
-  - binaries via fork / pinned releases
-  - model auto-download on first launch (QVAC-style)
+- First-run strategy (auto-download model + binaries via pinned releases)
 
-## Current decision (locked)
+## Next concrete work
+1. Pin exact release URLs + SHA256 in `SOURCES.md`
+2. Implement real first-run logic in launcher scripts
+3. Prepare USB packing instructions
+4. Populate `docs/` with real offline materials
+5. Hardware test on 8 GB VRAM machine
 
-1. **Binaries** → fork / pinned GitHub Releases  
-2. **Model** → automatic download on first run if missing  
-
-See:
-- `FIRST-RUN.md`
-- `SOURCES.md`
-- `USB-STRUCTURE.md`
-
-## Next implementation steps
-
-1. Pin exact release URLs + model checksum in `SOURCES.md`
-2. Implement full launcher logic (Linux + Windows)
-3. USB preparation script
-4. Populate docs/
-5. Hardware test on 8 GB VRAM
-6. Public release cleanup
+## Principle
+Quality over speed. No stage is closed until it is production-grade.
