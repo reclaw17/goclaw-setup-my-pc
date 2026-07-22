@@ -1,6 +1,6 @@
 # Project Plan — goclaw-setup-my-pc
 
-**Version:** 1.0 (production-ready)  
+**Version:** 1.1 (production-ready)  
 **Last update:** 2026-07-22  
 **Principle:** Quality over speed. No stage is considered complete until it passes the quality gates.
 
@@ -40,7 +40,21 @@ Create a **portable AI agent** based on the official [goclaw](https://github.com
 
 ---
 
-## 3. Quality Principles (mandatory)
+## 3. Models
+
+### Cloud (primary)
+1. Grok 4.5
+2. Qwen 3.8
+3. Minimax M2.7
+
+### Local (fallback only)
+- **Qwen3.5-9B** (quantization Q4_K_M preferred, Q5_K_M acceptable)
+- Must run confidently on 8 GB VRAM + 16 GB system RAM
+- Used **only** when there is no internet
+
+---
+
+## 4. Quality Principles (mandatory)
 
 1. Every skill must pass `QUALITY-CHECKLIST.md` before being marked ready
 2. Dangerous actions always require explicit user confirmation
@@ -53,13 +67,14 @@ Create a **portable AI agent** based on the official [goclaw](https://github.com
 
 ---
 
-## 4. Current Honest Status
+## 5. Current Honest Status
 
 | Component                        | Status     | Quality  | Notes |
 |----------------------------------|------------|----------|-------|
 | System prompts (RU + EN)         | Done       | Good     | Solid |
 | USB-STRUCTURE.md                 | Done       | Good     | Clear |
 | QUALITY-CHECKLIST.md             | Done       | Good     | Mandatory |
+| MODELS.md                        | Done       | Good     | Fixed local model |
 | openwrt skill                    | Done       | Good     | Best skill so far |
 | local-docs skill                 | Partial    | Medium   | Needs strengthening from chip-docs-local |
 | safety-confirm skill             | Partial    | Medium   | Needs strengthening |
@@ -72,7 +87,7 @@ Create a **portable AI agent** based on the official [goclaw](https://github.com
 
 ---
 
-## 5. Phased Plan with Quality Gates
+## 6. Phased Plan with Quality Gates
 
 ### Phase 1 — Quality of Core Skills (CURRENT)
 
@@ -95,7 +110,7 @@ Only after this gate is closed → Phase 2.
 ### Phase 2 — Offline Runtime
 
 - Fabric as portable sidecar (Linux + Windows binaries)
-- Model selection and packaging for 8 GB VRAM + 16 GB RAM
+- Model: Qwen3.5-9B Q4_K_M
 - Correct online/offline detection and user notification
 - Memory-aware load/unload behaviour
 
@@ -158,21 +173,22 @@ Agent helps the user complete real tasks without critical errors or unsafe behav
 
 ---
 
-## 6. Dependencies & Constraints
+## 7. Dependencies & Constraints
 
 - Hardware target for local models: ≥ 8 GB VRAM + 16 GB system RAM
 - Inference engine: Fabric (qvac-fabric-llm.cpp) as OpenAI-compatible server
+- Local model: Qwen3.5-9B Q4_K_M
 - Secrets: only in `.env` (never committed)
 - User skill level: zero development experience → we lead, keep everything simple
 - Platform: goclaw (official repo) + our skills + Fabric
 
 ---
 
-## 7. Risks and Mitigations
+## 8. Risks and Mitigations
 
 | Risk | Impact | Mitigation |
 |------|--------|------------|
-| Local model too large for USB | High | Choose well-quantized 7–9B model; document size requirements |
+| Local model too large for USB | High | Qwen3.5-9B Q4_K_M is chosen as the balanced option |
 | Fabric compatibility with different GPUs | Medium | Prefer Vulkan + CPU fallback; test on real hardware early |
 | User has no coding experience | High | Keep all decisions transparent, write simple scripts, never assume knowledge |
 | Skills become inconsistent | Medium | Strict use of QUALITY-CHECKLIST.md + single source of truth |
@@ -180,7 +196,7 @@ Agent helps the user complete real tasks without critical errors or unsafe behav
 
 ---
 
-## 8. Working Rules
+## 9. Working Rules
 
 1. Always work **in order**. Never skip phases.
 2. A skill is not “done” until it passes the full QUALITY-CHECKLIST.md.
