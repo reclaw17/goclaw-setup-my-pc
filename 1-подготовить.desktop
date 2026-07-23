@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=1. Подготовить агента
+Comment=Подготовка портативного AI-агента
+Exec=bash -c 'cd "$(dirname "%k")" && bash "./подготовить.sh"; echo; read -p "Нажми Enter, чтобы закрыть..."'
+Terminal=true
+Icon=utilities-terminal
+Categories=Utility;
