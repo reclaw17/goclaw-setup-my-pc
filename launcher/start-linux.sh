@@ -26,6 +26,40 @@ cleanup() {
 }
 trap cleanup EXIT
 
+gen_hex() {
+  local n="$1"
+  if command -v openssl >/dev/null 2>&1; then
+    openssl rand -hex "$n"
+  else
+    head -c "$n" /dev/urandom | od -An -tx1 | tr -d ' \n'
+  fi
+}
+
+ensure_env() {
+  local envf="$ROOT/.env"
+  [[ -f "$envf" ]] || touch "$envf"
+
+  ensure_key() {
+    local key="$1" size="$2"
+    if ! grep -qE "^${key}=.+$" "$envf" 2>/dev/null; then
+      # remove empty key lines
+      if grep -qE "^${key}=" "$envf" 2>/dev/null; then
+        grep -vE "^${key}=" "$envf" > "$envf.tmp" && mv "$envf.tmp" "$envf"
+      fi
+      echo "${key}=$(gen_hex "$size")" >> "$envf"
+      log "Сгенерирован $key"
+    fi
+  }
+
+  ensure_key GOCLAW_GATEWAY_TOKEN 16
+  ensure_key GOCLAW_ENCRYPTION_KEY 32
+
+  # local portable defaults (safe for USB single-user)
+  if ! grep -qE '^GOCLAW_HOST=' "$envf" 2>/dev/null; then
+    echo 'GOCLAW_HOST=127.0.0.1' >> "$envf"
+  fi
+}
+
 verify_sha256() {
   local file="$1" expected="$2" actual
   if command -v sha256sum >/dev/null 2>&1; then
@@ -43,86 +77,85 @@ echo "=============================================="
 echo "Папка: $ROOT"
 echo
 
-# 1) goclaw binary
-if [[ ! -f "$GOCLAW_BIN" ]]; then
-  err "Нет файла goclaw/goclaw-linux. Сначала: bash подготовить.sh"
-fi
+[[ -f "$GOCLAW_BIN" ]] || err "Нет goclaw/goclaw-linux. Сначала: bash подготовить.sh"
 chmod +x "$GOCLAW_BIN" 2>/dev/null || true
 log "GoClaw найден"
 
-# 2) model
 mkdir -p "$ROOT/models"
 if [[ ! -f "$MODEL_FILE" ]]; then
-  log "Локальной модели нет. Скачиваю (~5.7 ГБ)..."
+  log "Скачиваю локальную модель (~5.7 ГБ)..."
   command -v curl >/dev/null 2>&1 || err "Нужен curl"
-  curl -L --fail --progress-bar -o "$MODEL_FILE.partial" "$MODEL_URL" \
-    || err "Не удалось скачать модель"
+  curl -L --fail --progress-bar -o "$MODEL_FILE.partial" "$MODEL_URL" || err "Не удалось скачать модель"
   mv "$MODEL_FILE.partial" "$MODEL_FILE"
 fi
 log "Проверяю модель..."
 verify_sha256 "$MODEL_FILE" "$MODEL_SHA256"
 log "Модель OK"
 
-# 3) online/offline
+# secrets + local bind
+ensure_env
+set -a
+# shellcheck disable=SC1091
+source "$ROOT/.env"
+set +a
+
+# Force local-safe bind (override dangerous 0.0.0.0 if present)
+export GOCLAW_HOST="${GOCLAW_HOST:-127.0.0.1}"
+if [[ "$GOCLAW_HOST" == "0.0.0.0" ]]; then
+  export GOCLAW_HOST="127.0.0.1"
+  log "GOCLAW_HOST сменён на 127.0.0.1 (безопасный локальный режим)"
+fi
+
+if [[ -z "${GOCLAW_GATEWAY_TOKEN:-}" ]]; then
+  # last-resort local only
+  export GOCLAW_ALLOW_INSECURE_NO_AUTH=1
+  log "Включён GOCLAW_ALLOW_INSECURE_NO_AUTH=1 (только локально)"
+fi
+
 ONLINE=0
 if ping -c 1 -W 2 1.1.1.1 >/dev/null 2>&1 || ping -c 1 -W 2 8.8.8.8 >/dev/null 2>&1; then
   ONLINE=1
-  log "Режим: ONLINE (облачные модели)"
+  log "Сеть: ONLINE"
 else
-  log "Режим: OFFLINE (локальная модель)"
+  log "Сеть: OFFLINE"
 fi
 
-# 4) offline → start Fabric
 if [[ "$ONLINE" -eq 0 ]]; then
-  if [[ ! -f "$FABRIC_BIN" ]]; then
-    err "Нет fabric/fabric-linux для offline-режима. Сначала: bash подготовить.sh"
-  fi
+  [[ -f "$FABRIC_BIN" ]] || err "Нет fabric/fabric-linux для offline. Сначала: bash подготовить.sh"
   chmod +x "$FABRIC_BIN" 2>/dev/null || true
-
   log "Запускаю Fabric на ${FABRIC_HOST}:${FABRIC_PORT}..."
-  # llama-server compatible flags
   ("$FABRIC_BIN" -m "$MODEL_FILE" --host "$FABRIC_HOST" --port "$FABRIC_PORT" \
     >"$ROOT/fabric/fabric.log" 2>&1) &
   FABRIC_PID=$!
   sleep 2
   if ! kill -0 "$FABRIC_PID" 2>/dev/null; then
-    echo "==> Лог Fabric:"
-    tail -n 30 "$ROOT/fabric/fabric.log" 2>/dev/null || true
+    tail -n 40 "$ROOT/fabric/fabric.log" 2>/dev/null || true
     err "Fabric не запустился. Смотри fabric/fabric.log"
   fi
   log "Fabric PID: $FABRIC_PID"
-  log "Endpoint: http://${FABRIC_HOST}:${FABRIC_PORT}/v1"
   export GOCLAW_LOCAL_ENDPOINT="http://${FABRIC_HOST}:${FABRIC_PORT}/v1"
-  export GOCLAW_MODE="offline"
-  export GOCLAW_WRAPPER="$ROOT/prompts/wrappers/qwen-local.md"
-else
-  export GOCLAW_MODE="online"
-  export GOCLAW_WRAPPER="$ROOT/prompts/wrappers/grok.md"
 fi
 
-# 5) common env for agent
 export GOCLAW_ROOT="$ROOT"
-export GOCLAW_PROMPTS="$ROOT/prompts"
-export GOCLAW_SKILLS="$ROOT/skills"
-export GOCLAW_DOCS="$ROOT/docs"
-export GOCLAW_COMMON_PROMPT="$ROOT/prompts/system-common.md"
-if [[ -f "$ROOT/.env" ]]; then
-  set -a
-  # shellcheck disable=SC1091
-  source "$ROOT/.env"
-  set +a
+export GOCLAW_DATA_DIR="${GOCLAW_DATA_DIR:-$ROOT/data}"
+export GOCLAW_WORKSPACE="${GOCLAW_WORKSPACE:-$ROOT/workspace}"
+export GOCLAW_CONFIG="${GOCLAW_CONFIG:-$ROOT/config/goclaw.json}"
+mkdir -p "$GOCLAW_DATA_DIR" "$GOCLAW_WORKSPACE"
+
+if [[ -z "${GOCLAW_POSTGRES_DSN:-}" ]]; then
+  echo
+  log "Внимание: у GoClaw Standard нужен PostgreSQL"
+  log "Сейчас GOCLAW_POSTGRES_DSN не задан в .env"
+  log "Без базы следующий запуск, скорее всего, снова упадёт"
+  log "См. файл DEBUG.md — раздел PostgreSQL"
+  echo
 fi
 
-log "Запускаю GoClaw..."
+log "Запускаю GoClaw (host=$GOCLAW_HOST)..."
 echo
 cd "$ROOT"
-
-# Try common invocation styles; first successful path wins via exec
-if "$GOCLAW_BIN" --help >/dev/null 2>&1; then
-  exec "$GOCLAW_BIN"
-elif "$GOCLAW_BIN" help >/dev/null 2>&1; then
-  exec "$GOCLAW_BIN"
-else
-  # raw binary start
-  exec "$GOCLAW_BIN"
-fi
+set +e
+"$GOCLAW_BIN"
+status=$?
+set -e
+exit "$status"
