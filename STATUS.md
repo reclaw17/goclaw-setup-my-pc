@@ -1,43 +1,27 @@
-# Project Status — Final for Design / Skills Phase
+# STATUS
 
-**Date:** 2026-07-22  
-**Decision:** Phase 1 is closed at production quality.
+**Date:** 2026-07-23
 
-## Completed
+## Binaries
 
-### Architecture
-- Model = brain
-- Individual wrappers for all 4 models
-- Shared safety rules (`system-common`)
-- Hybrid cloud + local (Fabric) design
+Pinned and downloadable via `FETCH_BINARIES=1 ./scripts/prepare-usb.sh`:
 
-### Skills (Production-ready)
-- local-docs
-- safety-confirm
-- openwrt
-- fabric-offline
-- pc-setup
-- model-router
-- backup
-- network-vpn
-- coding-quality
+| Component | Status |
+|-----------|--------|
+| GoClaw Linux amd64 (`v3.15.0-beta.177`) | Pinned + SHA256 |
+| Fabric Linux Vulkan (`b7349`) | Pinned + SHA256 |
+| Fabric Windows Vulkan (`b7349`) | Pinned + SHA256 |
+| GoClaw Windows | Not published upstream yet |
 
-### Infrastructure
-- PROJECT-PLAN.md (v1.3+)
-- QUALITY-CHECKLIST.md
-- MODELS.md
-- SOURCES.md (policy + first-run strategy)
-- USB-STRUCTURE.md
-- FIRST-RUN.md
-- launcher stubs + first-run logic description
-- .gitignore + .env.example
+Local verified copies were also prepared in project vendor cache for packaging tests.
 
-## Explicitly deferred to next phases
-1. Exact SHA256 pins for binaries and model
-2. Full working launcher orchestration code
-3. Real population of `docs/`
-4. Hardware testing on 8 GB VRAM
-5. Public MIT release cleanup
+## Model
 
-## Principle kept
-Quality over speed. No low-quality stubs left in core path.
+```text
+MODEL_SHA256=03b74727a860a56338e042c4420bb3f04b2fec5734175f4cb9fa853daf52b7e8
+```
+
+## Remaining user steps
+
+1. Fill `.env`
+2. Run `MVP-TEST-CHECKLIST.md` on real hardware
