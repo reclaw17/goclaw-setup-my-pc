@@ -1,17 +1,21 @@
-# Skills — Production Status
+# Skills
 
-All core skills are at production quality and must continue to pass `QUALITY-CHECKLIST.md`.
+## Production-ready
 
-| Skill | Status | Purpose |
-|-------|--------|--------|
-| local-docs | Production | Offline documentation |
-| safety-confirm | Production | Cursor-style safety |
-| openwrt | Production | OpenWrt router setup |
-| fabric-offline | Production | Local model via Fabric |
-| pc-setup | Production | CachyOS / Arch + Windows 11 |
-| model-router | Production | Model + wrapper switching |
-| backup | Production | Safe backups |
-| network-vpn | Production | Network, DNS, VPN |
-| coding-quality | Production | Clean & safe code generation |
+| Skill | Role |
+|-------|------|
+| local-docs | Offline knowledge first |
+| safety-confirm | Explicit confirmation before changes |
+| admin-check | Detect admin/sudo before elevated PC actions |
+| openwrt | Router workflow |
+| fabric-offline | Offline brain path |
+| pc-setup | Arch/CachyOS + Windows 11 |
+| model-router | Model + wrapper switching |
+| backup | Backup/restore discipline |
+| network-vpn | Network/VPN assistance |
+| coding-quality | Careful command/code generation |
 
-Phase 1 skill work is complete.
+## Principle
+
+Skills are tools for the model (the brain).  
+System-changing PC actions must go through `admin-check` + `safety-confirm`.

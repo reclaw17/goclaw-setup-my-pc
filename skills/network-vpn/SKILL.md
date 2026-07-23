@@ -1,29 +1,30 @@
 # network-vpn
 
 **Status:** Production-ready  
-**Last update:** 2026-07-22
+**Last update:** 2026-07-23
 
 ## Purpose
-
-Help the user configure network, VPN and DNS on both the PC and OpenWrt router.
+Help configure network, VPN and DNS on PC and OpenWrt.
 
 ## When to use
-
-- Setting up VPN clients (WireGuard preferred)
-- Configuring DNS (including AdGuard)
+- VPN clients (WireGuard preferred)
+- DNS (including AdGuard)
 - Basic network troubleshooting
 - Tailscale / remote access
 
 ## Rules
+1. Prefer official methods and packages
+2. On OpenWrt use UCI and official docs
+3. On PC system-level network/VPN/DNS changes → run `admin-check` first
+4. Always use `safety-confirm`
+5. Prefer WireGuard when possible
+6. Check local docs first
 
-1. Always prefer official methods and packages.
-2. On OpenWrt use UCI and official documentation.
-3. Always go through `safety-confirm`.
-4. Prefer WireGuard over older protocols when possible.
-5. First check local documentation.
+## Admin notes
+- Installing VPN packages / changing host firewall / system DNS on PC needs elevation
+- OpenWrt changes use router credentials over SSH, not local PC admin
+- Still require confirmation in both cases
 
 ## Integration
-
-- Works closely with `openwrt` and `pc-setup`
-- Uses `local-docs`
-- Must respect `safety-confirm` and model wrappers
+- `admin-check` (for PC-side elevated actions)
+- `openwrt`, `pc-setup`, `local-docs`, `safety-confirm`
