@@ -1,26 +1,25 @@
 # Launcher
 
 ## Files
-- `start-linux.sh`
-- `start-windows.bat`
+- `start-linux.sh` — real Linux launcher
+- `start-windows.bat` — Windows launcher
 
-## Responsibility
+## What start-linux.sh does
 
-The launcher is the entry point of the portable agent.
+1. Checks `goclaw/goclaw-linux`
+2. Ensures local model exists (downloads if missing, verifies SHA256)
+3. Detects online/offline
+4. Offline → starts Fabric (`fabric/fabric-linux`) with local model on `127.0.0.1:8080`
+5. Loads `.env` if present
+6. Starts GoClaw
+7. Stops Fabric on exit
 
-### Must do
-1. Detect OS
-2. Ensure goclaw binary exists (fetch from pinned release if configured)
-3. Ensure Fabric binary exists (fetch from pinned release if configured)
-4. Ensure local model exists:
-   - if missing → download `qwen3.5-9b-q4_k_m.gguf` into `models/`
-   - verify checksum
-5. Detect internet
-6. Choose mode:
-   - online → cloud model + matching wrapper
-   - offline → start Fabric + local model + local wrapper
-7. Start goclaw
+## User entrypoints
 
-## Status
+Prefer:
 
-Stubs exist. Full first-run + fetch logic is defined in `FIRST-RUN.md` and will be implemented as executable logic next.
+```bash
+bash старт.sh
+```
+
+not the launcher file directly.

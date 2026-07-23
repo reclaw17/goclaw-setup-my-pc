@@ -1,27 +1,41 @@
 @echo off
-REM ============================================================
-REM goclaw-setup-my-pc — Windows Launcher (Production stub)
-REM ============================================================
+chcp 65001 >nul
+setlocal EnableExtensions
+cd /d "%~dp0.."
+set "ROOT=%cd%"
 
 echo ==============================================
 echo  goclaw-setup-my-pc
-echo  Portable AI Agent — Windows Launcher
+echo  Portable AI Agent — Windows
 echo ==============================================
-echo USB root: %~dp0..
+echo Папка: %ROOT%
 echo.
 
-REM Future production logic:
-REM 1. Check for internet
-REM 2. If offline → start Fabric + load Qwen3.5-9B
-REM 3. Select correct model wrapper
-REM 4. Launch goclaw with proper environment
+if not exist "%ROOT%\goclaw\goclaw-windows.exe" (
+  echo ==^> Ошибка: нет goclaw\goclaw-windows.exe
+  echo ==^> Официальный Windows-бинарник GoClaw пока может отсутствовать.
+  echo ==^> На Linux путь уже рабочий.
+  pause
+  exit /b 1
+)
 
-echo [INFO] This is a production-ready stub.
-echo [INFO] Full implementation will be completed in Phase 3.
+if not exist "%ROOT%\models\qwen3.5-9b-q4_k_m.gguf" (
+  echo ==^> Локальной модели нет. Скачаю при первом offline-запуске через подготовить.
+)
+
+if exist "%ROOT%\.env" (
+  for /f "usebackq tokens=* delims=" %%A in ("%ROOT%\.env") do (
+    echo %%A | findstr /r "^[A-Za-z0-9_]*=" >nul && set "%%A"
+  )
+)
+
+echo ==^> Запускаю GoClaw...
 echo.
-echo Next steps when ready:
-echo   - Detect internet connectivity
-echo   - Start Fabric if needed
-echo   - Launch goclaw binary with correct model + wrapper
-echo.
-pause
+"%ROOT%\goclaw\goclaw-windows.exe"
+if errorlevel 1 (
+  echo ==^> GoClaw завершился с ошибкой
+  pause
+  exit /b 1
+)
+
+endlocal
