@@ -1,148 +1,115 @@
 # goclaw-setup-my-pc
 
-**Portable AI agent** for setting up PCs and OpenWrt routers from a USB flash drive.
+Портативный AI-агент для настройки компьютера и OpenWrt-роутера.
 
-Based on official [goclaw](https://github.com/nextlevelbuilder/goclaw).
-
-Портативный AI-агент для настройки компьютеров и OpenWrt-роутеров с флешки.
-
----
-
-## What it does
-
-- Configures **CachyOS / Arch Linux** and **Windows 11**
-- Configures **OpenWrt** routers (backup first → packages → Wi-Fi → VPN → DNS)
-- Works **offline** via Fabric + local model
-- Uses local documentation on the USB
-- Cursor-style safety (asks before any dangerous action)
-- Russian + English
+Работает с флешки.  
+Подходит даже если у тебя **нет опыта в программировании**.
 
 ---
 
-## Models
+## Что он умеет
 
-| Type | Models |
-|------|--------|
-| Cloud (primary) | Grok 4.5, Qwen 3.8, Minimax M2.7 |
-| Local (fallback only) | Qwen3.5-9B Q4_K_M |
-
-Local model is used **only when there is no internet**.  
-Target hardware: **8 GB VRAM + 16 GB RAM**.
+- Настраивать **CachyOS / Arch Linux** и **Windows 11**
+- Настраивать **OpenWrt**-роутер (сначала бэкап, потом остальное)
+- Работать **без интернета** (через локальную модель)
+- Спрашивать подтверждение перед опасными действиями
+- Работать на русском и английском
 
 ---
 
-## Architecture
+## Как запустить (самый простой путь)
 
-> The model is the brain.  
-> Skills, docs, Fabric and launcher are the tools.
+### Шаг 1. Скопируй проект на флешку
 
-Each model has its own optimized wrapper.  
-When the model changes, the wrapper changes too.
+Скопируй всю папку проекта на USB-флешку.
 
----
+### Шаг 2. Подготовка (один раз)
 
-## How to launch (for a non-developer)
-
-### 1. Prepare the USB
-
-1. Format a USB flash drive (exFAT or NTFS is fine for Windows+Linux use).
-2. Copy the contents of this repository to the USB.
-3. (Recommended) run the helper:
-
-```bash
-bash scripts/prepare-usb.sh /path/to/usb
-```
-
-### 2. Place or obtain binaries
-
-You need two binaries on the USB:
-
-- `goclaw/` → goclaw binary (Linux + Windows)
-- `fabric/` → Fabric binary (Linux + Windows)
-
-Sources are described in `SOURCES.md`.  
-Large binaries are not stored in git on purpose.
-
-### 3. Secrets
-
-Copy the example and fill your keys:
-
-```bash
-cp .env.example .env
-```
-
-Put API keys only in `.env`. Never commit this file.
-
-### 4. Start
+**Windows:**
+- Открой папку на флешке
+- Запусти файл `подготовить.bat`
 
 **Linux:**
 ```bash
-bash launcher/start-linux.sh
+bash подготовить.sh
 ```
+
+Этот шаг:
+- создаст нужные папки
+- создаст файл `.env`
+
+### Шаг 3. Ключи (только для online-режима)
+
+Открой файл `.env` любым блокнотом и вставь свои API-ключи:
+
+```env
+GROK_API_KEY=...
+QWEN_API_KEY=...
+MINIMAX_API_KEY=...
+```
+
+Если интернета нет — ключи не обязательны.  
+Тогда агент будет работать через локальную модель.
+
+### Шаг 4. Запуск
 
 **Windows:**
-```bat
-launcher\start-windows.bat
+- Запусти `старт.bat`
+
+**Linux:**
+```bash
+bash старт.sh
 ```
 
-### 5. First run (important)
+### Шаг 5. Первый запуск
 
-On the first offline launch the agent will:
+При первом запуске без локальной модели агент может скачать её сам  
+(примерно **5.7 ГБ**, один раз).
 
-1. Notice that the local model is missing
-2. Download `Qwen3.5-9B-Q4_K_M.gguf` (~5.7 GB)
-3. Verify SHA256
-4. Save it to `models/`
-5. Start normally
-
-Next launches will reuse the downloaded model.
+Потом модель останется на флешке.
 
 ---
 
-## Safety
+## Важно простыми словами
 
-Before any action that changes the system or router the agent will:
-
-1. Show the exact command
-2. Explain what it does
-3. Ask for confirmation
-
-On OpenWrt it will also offer a backup first.
+1. **Не удаляй** папки `prompts`, `skills`, `launcher`, `docs`
+2. Файл `.env` — личный. Его нельзя выкладывать в интернет
+3. Перед настройкой роутера агент должен предложить **сделать бэкап**
+4. Если агент предлагает опасную команду — он обязан спросить «можно?»
 
 ---
 
-## Project structure
+## Что ещё может понадобиться
 
-```
-.
-├── prompts/                 # common rules + model wrappers
-├── skills/                  # production-ready skills
-├── launcher/                # start scripts + first-run logic
-├── docs/                    # offline documentation
-├── config/goclaw.example.yaml
-├── scripts/prepare-usb.sh
-├── SOURCES.md               # pinned model + binary policy
-├── FIRST-RUN.md
-├── USB-STRUCTURE.md
-├── MVP-TEST-CHECKLIST.md
-└── PROJECT-PLAN.md
-```
+Чтобы агент запускался полностью, на флешке должны быть программы:
+
+- `goclaw` — сам агент
+- `fabric` — движок для локальной модели
+
+Их можно скачать автоматически (если настроено) или положить вручную.  
+Подробности: файл `SOURCES.md`.
 
 ---
 
-## Current status
+## Если что-то не работает
 
-Design + Skills + packaging design are complete at high quality.
-
-Still required for a fully runnable USB image:
-
-1. Place real goclaw + Fabric binaries (or download via pinned releases)
-2. Fill remaining binary SHA256 values in `SOURCES.md`
-3. Populate `docs/` with real content
-4. Run `MVP-TEST-CHECKLIST.md` on real hardware
+1. Запусти сначала `подготовить`
+2. Потом `старт`
+3. Проверь, что ты запускаешь файлы **из папки проекта на флешке**
+4. Если нет интернета и нет модели — скачай модель заранее или включи интернет на первый запуск
 
 ---
 
-## License
+## Для тех, кто хочет глубже
+
+- `PROJECT-PLAN.md` — план проекта
+- `SOURCES.md` — откуда берутся модель и программы
+- `FIRST-RUN.md` — как устроен первый запуск
+- `MVP-TEST-CHECKLIST.md` — проверка на реальном компьютере
+- `USB-STRUCTURE.md` — структура флешки
+
+---
+
+## Лицензия
 
 MIT
