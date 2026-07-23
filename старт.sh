@@ -14,6 +14,9 @@ echo ""
 if [[ ! -f .env ]]; then
   echo "[!] Сначала выполни подготовку:"
   echo "    bash подготовить.sh"
+  echo ""
+  echo "Нажми Enter, чтобы закрыть окно..."
+  read -r _
   exit 1
 fi
 
@@ -25,20 +28,29 @@ else
 fi
 
 # binaries
+MISSING=0
 if [[ -x goclaw/goclaw-linux || -f goclaw/goclaw-linux ]]; then
   echo "[ok] GoClaw найден"
 else
   echo "[!] GoClaw не найден"
-  echo "    Запусти: bash подготовить.sh"
-  echo "    и согласись скачать программы"
+  MISSING=1
 fi
 
 if [[ -x fabric/fabric-linux || -f fabric/fabric-linux ]]; then
   echo "[ok] Fabric найден"
 else
   echo "[!] Fabric не найден"
-  echo "    Запусти: bash подготовить.sh"
-  echo "    и согласись скачать программы"
+  MISSING=1
+fi
+
+if [[ "$MISSING" -eq 1 ]]; then
+  echo ""
+  echo "Сначала запусти подготовку и согласись скачать программы:"
+  echo "  bash подготовить.sh"
+  echo ""
+  echo "Нажми Enter, чтобы закрыть окно..."
+  read -r _
+  exit 1
 fi
 
 # model
@@ -46,14 +58,19 @@ if [[ -f models/qwen3.5-9b-q4_k_m.gguf ]]; then
   echo "[ok] Локальная модель найдена"
 else
   echo "[info] Локальная модель пока отсутствует"
-  echo "       При offline-запуске её нужно будет скачать"
 fi
 
 echo ""
 
 if [[ -f launcher/start-linux.sh ]]; then
   bash launcher/start-linux.sh
+  echo ""
+  echo "Нажми Enter, чтобы закрыть окно..."
+  read -r _
 else
   echo "[!] Не найден launcher/start-linux.sh"
+  echo ""
+  echo "Нажми Enter, чтобы закрыть окно..."
+  read -r _
   exit 1
 fi
