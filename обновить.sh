@@ -1,104 +1,69 @@
 #!/usr/bin/env bash
-# Простое обновление для новичка: проверка → вопрос → действие
 set -euo pipefail
 
+if [[ -z "${IN_TERMINAL:-}" && ( ! -t 0 || ! -t 1 ) ]]; then
+  SELF="$(readlink -f "$0" 2>/dev/null || realpath "$0" 2>/dev/null || echo "$0")"
+  DIR="$(cd "$(dirname "$SELF")" && pwd)"
+  if [[ -x "$DIR/scripts/run-in-terminal.sh" ]]; then
+    exec bash "$DIR/scripts/run-in-terminal.sh" "$SELF"
+  fi
+fi
+
 cd "$(cd "$(dirname "$0")" && pwd)"
+export IN_TERMINAL=1
 
+echo "==> Обновление помощника"
 echo
-echo "======================================"
-echo " Обновление помощника"
-echo "======================================"
+echo "1) файлы проекта"
+echo "2) программы (goclaw + Fabric)"
+echo "3) всё вместе"
+echo "0) выйти"
 echo
-echo "Что можно обновить:"
-echo "  1) файлы проекта (скрипты, skills, prompts)"
-echo "  2) программы (goclaw + Fabric)"
-echo "  3) всё вместе"
-echo "  0) ничего, выйти"
-echo
-read -r -p "Выбери пункт [0-3]: " choice
+read -r -p "==> Выбери пункт [0-3]: " choice
 echo
 
-ask_yes() {
-  local q="$1"
-  read -r -p "$q [да/нет]: " ans
-  case "${ans,,}" in
-    да|д|yes|y) return 0 ;;
-    *) return 1 ;;
-  esac
-}
-
-update_project() {
-  echo "[обновление] Файлы проекта..."
-  if [[ -d .git ]] && command -v git >/dev/null 2>&1; then
-    echo "Найден git. Буду обновлять через git pull."
-    if ask_yes "Обновить файлы проекта сейчас?"; then
-      git pull --ff-only || {
-        echo "[!] Не удалось обновить через git."
-        echo "    Можно скачать проект заново с GitHub."
-        return 1
-      }
-      echo "[ok] Файлы проекта обновлены"
-    else
-      echo "Пропущено"
-    fi
-  else
-    echo "Это не git-копия (или git не установлен)."
-    echo "Самый простой способ:"
-    echo "  1) скачать новую версию с GitHub"
-    echo "  2) скопировать поверх, НЕ затирая:"
-    echo "     - .env"
-    echo "     - models/"
-    echo "     - docs/custom/"
-    echo
-    echo "Ссылка: https://github.com/reclaw17/goclaw-setup-my-pc"
-  fi
-}
-
-update_binaries() {
-  echo "[обновление] Программы (goclaw + Fabric)..."
-  if [[ ! -f scripts/prepare-usb.sh ]]; then
-    echo "[!] Не найден scripts/prepare-usb.sh"
-    return 1
-  fi
-  if ask_yes "Скачать/обновить программы сейчас? Нужен интернет"; then
-    chmod +x scripts/prepare-usb.sh 2>/dev/null || true
-    # force re-fetch by removing markers if user confirmed
-    FETCH_BINARIES=1 PREFETCH_MODEL=0 bash scripts/prepare-usb.sh .
-    echo "[ok] Программы обновлены (по pinned-версиям из SOURCES.md)"
-  else
-    echo "Пропущено"
-  fi
+ask() {
+  read -r -p "==> $1 [да/нет]: " a
+  case "${a,,}" in да|д|yes|y) return 0 ;; *) return 1 ;; esac
 }
 
 case "${choice}" in
   1)
-    update_project
+    if [[ -d .git ]] && command -v git >/dev/null 2>&1; then
+      if ask "Обновить файлы через git?"; then
+        git pull --ff-only && echo "==> Файлы обновлены" || echo "==> Не удалось обновить"
+      fi
+    else
+      echo "==> Это не git-копия"
+      echo "==> Скачай новую версию с GitHub и скопируй поверх"
+      echo "==> Не затирай: .env  models/  docs/custom/"
+    fi
     ;;
   2)
-    update_binaries
+    if ask "Скачать/обновить программы?"; then
+      FETCH_BINARIES=1 bash scripts/prepare-usb.sh .
+      echo "==> Программы обновлены"
+    fi
     ;;
   3)
-    update_project
-    echo
-    update_binaries
+    if [[ -d .git ]] && command -v git >/dev/null 2>&1; then
+      if ask "Обновить файлы через git?"; then
+        git pull --ff-only || true
+      fi
+    fi
+    if ask "Скачать/обновить программы?"; then
+      FETCH_BINARIES=1 bash scripts/prepare-usb.sh .
+    fi
+    echo "==> Готово"
     ;;
   0|"")
-    echo "Выход без изменений"
-    exit 0
+    echo "==> Выход"
     ;;
   *)
-    echo "Неизвестный пункт"
-    exit 1
+    echo "==> Неизвестный пункт"
     ;;
 esac
 
 echo
-echo "======================================"
-echo " Готово"
-echo "======================================"
-echo
-echo "Важно:"
-echo "- файл .env не трогался"
-echo "- локальная модель сама не обновлялась"
-echo "- запуск: bash старт.sh"
-echo
+echo "==> Нажмите Enter для выхода"
+read -r _

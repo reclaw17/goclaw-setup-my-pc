@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=3 Обновить
+Comment=Обновление помощника
+Exec=bash -c 'cd "$(dirname "%k")"; export IN_TERMINAL=1; bash "./обновить.sh"'
+Terminal=true
+Icon=view-refresh
+Categories=Utility;
+StartupNotify=true

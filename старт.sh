@@ -1,76 +1,46 @@
 #!/usr/bin/env bash
-# Простой запуск агента для новичка
 set -euo pipefail
 
-cd "$(dirname "$0")"
-ROOT="$(pwd)"
+if [[ -z "${IN_TERMINAL:-}" && ( ! -t 0 || ! -t 1 ) ]]; then
+  SELF="$(readlink -f "$0" 2>/dev/null || realpath "$0" 2>/dev/null || echo "$0")"
+  DIR="$(cd "$(dirname "$SELF")" && pwd)"
+  if [[ -x "$DIR/scripts/run-in-terminal.sh" ]]; then
+    exec bash "$DIR/scripts/run-in-terminal.sh" "$SELF"
+  fi
+fi
 
-echo "======================================"
-echo " Запуск агента"
-echo "======================================"
-echo "Папка: $ROOT"
-echo ""
+cd "$(cd "$(dirname "$0")" && pwd)"
+export IN_TERMINAL=1
 
-if [[ ! -f .env ]]; then
-  echo "[!] Сначала выполни подготовку:"
-  echo "    bash подготовить.sh"
-  echo ""
-  echo "Нажми Enter, чтобы закрыть окно..."
+echo "==> Запуск помощника"
+echo
+
+if [[ ! -f goclaw/goclaw-linux ]]; then
+  echo "==> Сначала нужна подготовка"
+  echo "==> Запусти: bash подготовить.sh"
+  echo
+  echo "==> Нажмите Enter для выхода"
   read -r _
   exit 1
 fi
 
-# internet
-if ping -c 1 -W 2 8.8.8.8 >/dev/null 2>&1; then
-  echo "[ok] Интернет: есть → можно использовать облачные модели"
+if [[ ! -f .env && -f .env.example ]]; then
+  cp .env.example .env
+fi
+
+chmod +x goclaw/goclaw-linux fabric/fabric-linux launcher/start-linux.sh scripts/run-in-terminal.sh 2>/dev/null || true
+
+echo "==> Стартую..."
+echo
+bash launcher/start-linux.sh
+status=$?
+
+echo
+if [[ "$status" -eq 0 ]]; then
+  echo "==> Завершено"
 else
-  echo "[info] Интернет: нет → нужен offline-режим"
+  echo "==> Завершено с ошибкой (код $status)"
 fi
-
-# binaries
-MISSING=0
-if [[ -x goclaw/goclaw-linux || -f goclaw/goclaw-linux ]]; then
-  echo "[ok] GoClaw найден"
-else
-  echo "[!] GoClaw не найден"
-  MISSING=1
-fi
-
-if [[ -x fabric/fabric-linux || -f fabric/fabric-linux ]]; then
-  echo "[ok] Fabric найден"
-else
-  echo "[!] Fabric не найден"
-  MISSING=1
-fi
-
-if [[ "$MISSING" -eq 1 ]]; then
-  echo ""
-  echo "Сначала запусти подготовку и согласись скачать программы:"
-  echo "  bash подготовить.sh"
-  echo ""
-  echo "Нажми Enter, чтобы закрыть окно..."
-  read -r _
-  exit 1
-fi
-
-# model
-if [[ -f models/qwen3.5-9b-q4_k_m.gguf ]]; then
-  echo "[ok] Локальная модель найдена"
-else
-  echo "[info] Локальная модель пока отсутствует"
-fi
-
-echo ""
-
-if [[ -f launcher/start-linux.sh ]]; then
-  bash launcher/start-linux.sh
-  echo ""
-  echo "Нажми Enter, чтобы закрыть окно..."
-  read -r _
-else
-  echo "[!] Не найден launcher/start-linux.sh"
-  echo ""
-  echo "Нажми Enter, чтобы закрыть окно..."
-  read -r _
-  exit 1
-fi
+echo "==> Нажмите Enter для выхода"
+read -r _
+exit "$status"

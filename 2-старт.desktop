@@ -1,10 +1,10 @@
 [Desktop Entry]
+Version=1.0
 Type=Application
-Name=2. Запустить агента
-Name[ru]=2. Запустить агента
-Comment=Запуск goclaw-setup-my-pc
-Exec=bash -c 'cd "$(dirname "%k")" && bash "./старт.sh"; echo; read -p "Нажми Enter..."'
-Path=
+Name=2 Старт
+Comment=Запуск помощника
+Exec=bash -c 'cd "$(dirname "%k")"; export IN_TERMINAL=1; bash "./старт.sh"'
 Terminal=true
+Icon=system-run
 Categories=Utility;
-Icon=utilities-terminal
+StartupNotify=true

@@ -1,10 +1,11 @@
 [Desktop Entry]
+Version=1.0
 Type=Application
-Name=1. Подготовить агента
-Name[ru]=1. Подготовить агента
-Comment=Подготовка goclaw-setup-my-pc
-Exec=bash -c 'cd "$(dirname "%k")" && bash "./подготовить.sh"; echo; read -p "Нажми Enter..."'
+Name=1 Подготовить
+Comment=Подготовка помощника
+Exec=bash -c 'cd "$(dirname "%k")"; export IN_TERMINAL=1; bash "./подготовить.sh"'
 Path=
 Terminal=true
+Icon=system-software-update
 Categories=Utility;
-Icon=utilities-terminal
+StartupNotify=true
