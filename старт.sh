@@ -4,7 +4,8 @@ set -euo pipefail
 if [[ -z "${IN_TERMINAL:-}" && ( ! -t 0 || ! -t 1 ) ]]; then
   SELF="$(readlink -f "$0" 2>/dev/null || realpath "$0" 2>/dev/null || echo "$0")"
   DIR="$(cd "$(dirname "$SELF")" && pwd)"
-  if [[ -x "$DIR/scripts/run-in-terminal.sh" ]]; then
+  if [[ -f "$DIR/scripts/run-in-terminal.sh" ]]; then
+    chmod +x "$DIR/scripts/run-in-terminal.sh" 2>/dev/null || true
     exec bash "$DIR/scripts/run-in-terminal.sh" "$SELF"
   fi
 fi
@@ -32,8 +33,10 @@ chmod +x goclaw/goclaw-linux fabric/fabric-linux launcher/start-linux.sh scripts
 
 echo "==> Стартую..."
 echo
+set +e
 bash launcher/start-linux.sh
 status=$?
+set -e
 
 echo
 if [[ "$status" -eq 0 ]]; then

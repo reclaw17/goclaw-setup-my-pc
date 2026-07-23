@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# If started by double-click, open Konsole-like window first
 if [[ -z "${IN_TERMINAL:-}" && ( ! -t 0 || ! -t 1 ) ]]; then
   SELF="$(readlink -f "$0" 2>/dev/null || realpath "$0" 2>/dev/null || echo "$0")"
   DIR="$(cd "$(dirname "$SELF")" && pwd)"
-  if [[ -x "$DIR/scripts/run-in-terminal.sh" ]]; then
+  if [[ -f "$DIR/scripts/run-in-terminal.sh" ]]; then
+    chmod +x "$DIR/scripts/run-in-terminal.sh" 2>/dev/null || true
     exec bash "$DIR/scripts/run-in-terminal.sh" "$SELF"
   fi
 fi
@@ -85,3 +85,4 @@ echo "==> Дальше запусти: bash старт.sh"
 echo
 echo "==> Нажмите Enter для выхода"
 read -r _
+exit 0
