@@ -1,91 +1,104 @@
 #!/usr/bin/env bash
-# Простое обновление для новичка
-# Ничего не меняет без твоего согласия
-
+# Простое обновление для новичка: проверка → вопрос → действие
 set -euo pipefail
 
-echo "========================================"
-echo "  Проверка обновлений"
-echo "========================================"
-echo
-echo "Этот скрипт НЕ обновляет ничего сам."
-echo "Сначала показывает, что можно обновить,"
-echo "и только после твоего согласия продолжает."
-echo
+cd "$(cd "$(dirname "$0")" && pwd)"
 
-ROOT="$(cd "$(dirname "$0")" && pwd)"
-cd "$ROOT"
-
+echo
+echo "======================================"
+echo " Обновление помощника"
+echo "======================================"
+echo
 echo "Что можно обновить:"
-echo "  1) Файлы помощника (skills, prompts, скрипты)"
-echo "  2) Программы goclaw и Fabric (если настроено)"
-echo "  3) Локальную модель (только вручную, большой файл)"
+echo "  1) файлы проекта (скрипты, skills, prompts)"
+echo "  2) программы (goclaw + Fabric)"
+echo "  3) всё вместе"
+echo "  0) ничего, выйти"
 echo
-echo "Рекомендация: обновлять только когда есть интернет"
-echo "и когда ты готов потратить немного времени."
+read -r -p "Выбери пункт [0-3]: " choice
 echo
 
-read -r -p "Проверить обновления файлов помощника с GitHub? (да/нет): " ANSWER
-ANSWER="$(echo "$ANSWER" | tr '[:upper:]' '[:lower:]')"
+ask_yes() {
+  local q="$1"
+  read -r -p "$q [да/нет]: " ans
+  case "${ans,,}" in
+    да|д|yes|y) return 0 ;;
+    *) return 1 ;;
+  esac
+}
 
-if [[ "$ANSWER" != "да" && "$ANSWER" != "y" && "$ANSWER" != "yes" ]]; then
-  echo
-  echo "Ок, ничего не меняю."
-  exit 0
-fi
+update_project() {
+  echo "[обновление] Файлы проекта..."
+  if [[ -d .git ]] && command -v git >/dev/null 2>&1; then
+    echo "Найден git. Буду обновлять через git pull."
+    if ask_yes "Обновить файлы проекта сейчас?"; then
+      git pull --ff-only || {
+        echo "[!] Не удалось обновить через git."
+        echo "    Можно скачать проект заново с GitHub."
+        return 1
+      }
+      echo "[ok] Файлы проекта обновлены"
+    else
+      echo "Пропущено"
+    fi
+  else
+    echo "Это не git-копия (или git не установлен)."
+    echo "Самый простой способ:"
+    echo "  1) скачать новую версию с GitHub"
+    echo "  2) скопировать поверх, НЕ затирая:"
+    echo "     - .env"
+    echo "     - models/"
+    echo "     - docs/custom/"
+    echo
+    echo "Ссылка: https://github.com/reclaw17/goclaw-setup-my-pc"
+  fi
+}
+
+update_binaries() {
+  echo "[обновление] Программы (goclaw + Fabric)..."
+  if [[ ! -f scripts/prepare-usb.sh ]]; then
+    echo "[!] Не найден scripts/prepare-usb.sh"
+    return 1
+  fi
+  if ask_yes "Скачать/обновить программы сейчас? Нужен интернет"; then
+    chmod +x scripts/prepare-usb.sh 2>/dev/null || true
+    # force re-fetch by removing markers if user confirmed
+    FETCH_BINARIES=1 PREFETCH_MODEL=0 bash scripts/prepare-usb.sh .
+    echo "[ok] Программы обновлены (по pinned-версиям из SOURCES.md)"
+  else
+    echo "Пропущено"
+  fi
+}
+
+case "${choice}" in
+  1)
+    update_project
+    ;;
+  2)
+    update_binaries
+    ;;
+  3)
+    update_project
+    echo
+    update_binaries
+    ;;
+  0|"")
+    echo "Выход без изменений"
+    exit 0
+    ;;
+  *)
+    echo "Неизвестный пункт"
+    exit 1
+    ;;
+esac
 
 echo
-echo "Проверяю..."
-
-if ! command -v git >/dev/null 2>&1; then
-  echo "На этом компьютере нет git."
-  echo "Чтобы обновить файлы помощника, скачай новую версию с GitHub вручную"
-  echo "и скопируй её на флешку."
-  exit 1
-fi
-
-if [[ ! -d ".git" ]]; then
-  echo "Эта папка не является git-репозиторием."
-  echo "Самый простой способ обновиться:"
-  echo "  1. Скачать свежую версию с GitHub"
-  echo "  2. Скопировать новые файлы поверх старых"
-  echo "  3. Не трогать файл .env и папку models"
-  exit 0
-fi
-
-echo "Получаю информацию о новой версии..."
-git fetch --quiet origin main 2>/dev/null || true
-
-LOCAL=$(git rev-parse HEAD 2>/dev/null || echo "unknown")
-REMOTE=$(git rev-parse origin/main 2>/dev/null || echo "unknown")
-
-if [[ "$LOCAL" == "$REMOTE" ]]; then
-  echo
-  echo "Обновлений файлов помощника нет. У тебя актуальная версия."
-  exit 0
-fi
-
+echo "======================================"
+echo " Готово"
+echo "======================================"
 echo
-echo "Есть новая версия."
-echo "Локально:  $LOCAL"
-echo "На GitHub: $REMOTE"
+echo "Важно:"
+echo "- файл .env не трогался"
+echo "- локальная модель сама не обновлялась"
+echo "- запуск: bash старт.sh"
 echo
-read -r -p "Обновить файлы помощника сейчас? (да/нет): " CONFIRM
-CONFIRM="$(echo "$CONFIRM" | tr '[:upper:]' '[:lower:]')"
-
-if [[ "$CONFIRM" != "да" && "$CONFIRM" != "y" && "$CONFIRM" != "yes" ]]; then
-  echo
-  echo "Ок, обновление отменено."
-  exit 0
-fi
-
-echo
-echo "Обновляю файлы..."
-# Сохраняем .env и models
-git stash push -m "auto-stash-before-update" -- .env 2>/dev/null || true
-git pull --ff-only origin main
-echo
-echo "Готово. Файлы помощника обновлены."
-echo "Файл .env и папка models не должны были пострадать."
-echo
-echo "Теперь можно запускать: bash старт.sh"
