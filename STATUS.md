@@ -2,37 +2,36 @@
 
 **Date:** 2026-07-24
 
-## Phase A — USB shell — DONE
-AppImage fetch/start/update, `.env`, gitignore.
+## Plan phases A–D — complete
 
-## Phase B — Providers — DONE
-Grok / OpenRouter / Fabric presets + `docs/PROVIDERS.md`.
+| Phase | Status |
+|-------|--------|
+| A USB shell + AppImage | Done |
+| B Provider presets | Done |
+| C Fetch AppImage (not in git) | Done |
+| D Skills + docs + Fabric/model fetch + Win notes | Done |
 
-## Phase D — DONE (implementation layer)
+## Human20 archive audit
 
-| Item | Status |
-|------|--------|
-| Skills (openwrt, pc-setup, amnezia, fabric-offline, …) | Done |
-| Real notes under `docs/**` | Done |
-| `scripts/fetch-fabric.sh` + SHA256 | Done |
-| `scripts/fetch-model.sh` + SHA256 | Done |
-| `scripts/fetch-offline-stack.sh` | Done |
-| Embed layout documented | `docs/EMBED.md` |
-| `prepare.sh` optional offline fetch | Done |
-| Win11 honesty + folders | `docs/windows11`, `prepare.bat` |
+- Read `human20mcp-20260722.zip` (235 catalog cards).  
+- Mapped shortlist → [skills/SOURCES-HUMAN20.md](skills/SOURCES-HUMAN20.md).  
+- Added `web-search`; tightened `coding-quality` / `local-docs`.  
+- Archive does **not** replace our SKILL.md files (cards ≠ full skill bodies).
 
-### Still hardware-dependent
-- Full Win11 GUI GoClaw Lite binary (upstream/factory gap) — use cloud client, `fabric\win`, or WSL+AppImage
-- Real-device QA on each user's PC/router
+## Secrets
 
-## Run (Linux)
+Use **repo-root** `.env` (from `.env.example`).  
+Do not commit keys. (`config/` holds provider *examples* only.)
+
+## Run
 
 ```bash
-bash prepare.sh                    # AppImage; ask for Fabric+model
-# or forced offline stack:
-FETCH_OFFLINE=1 bash prepare.sh
+bash prepare.sh          # AppImage; optional offline stack
+# .env → XAI_API_KEY=
 bash start.sh
 ```
 
-## Packaging factory
-https://github.com/reclaw17/goclaw-lite-cachyos/releases/tag/v0.2.0-cachyos
+## Open (hardware / upstream)
+
+- Win11 official GoClaw Lite GUI binary when available  
+- Optional large doc mirrors via chip-docs-local  

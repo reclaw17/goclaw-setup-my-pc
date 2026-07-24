@@ -1,28 +1,18 @@
 # Skills index
 
-| Skill | Path | Role |
-|-------|------|------|
-| local-docs | `skills/local-docs/` | Prefer USB offline docs |
-| safety-confirm | `skills/safety-confirm/` | Confirm before changes |
-| admin-check | `skills/admin-check/` | sudo / Admin detection |
-| openwrt | `skills/openwrt/` | Router OpenWrt workflow |
-| pc-setup | `skills/pc-setup/` | Arch/CachyOS + Windows 11 PC |
-| network-vpn | `skills/network-vpn/` | Network, VPN, DNS |
-| amnezia-adguard | `skills/amnezia-adguard/` | AdGuard + Amnezia |
-| fabric-offline | `skills/fabric-offline/` | Local LLM fallback |
-| model-router | `skills/model-router/` | Cloud vs local routing |
-| backup | `skills/backup/` | Backup discipline |
-| coding-quality | `skills/coding-quality/` | Careful commands/code |
+| Skill | Path |
+|-------|------|
+| local-docs | `skills/local-docs/` |
+| web-search | `skills/web-search/` |
+| safety-confirm | `skills/safety-confirm/` |
+| admin-check | `skills/admin-check/` |
+| openwrt | `skills/openwrt/` |
+| pc-setup | `skills/pc-setup/` |
+| network-vpn | `skills/network-vpn/` |
+| amnezia-adguard | `skills/amnezia-adguard/` |
+| fabric-offline | `skills/fabric-offline/` |
+| model-router | `skills/model-router/` |
+| backup | `skills/backup/` |
+| coding-quality | `skills/coding-quality/` |
 
-## Loading
-
-GoClaw / agent should treat each `SKILL.md` as a tool description.  
-System-changing actions: **admin-check → safety-confirm → act**.
-
-## Priority for this product
-
-1. safety-confirm + admin-check  
-2. local-docs  
-3. pc-setup / openwrt  
-4. network-vpn / amnezia-adguard  
-5. fabric-offline when offline  
+Human20 archive mapping: [SOURCES-HUMAN20.md](SOURCES-HUMAN20.md)
