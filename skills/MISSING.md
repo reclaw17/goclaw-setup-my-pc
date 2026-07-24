@@ -1,14 +1,16 @@
 # Missing / later
 
-## Done enough for MVP (Phase D skills slice)
+## Done in Phase D skills pass (2026-07-24)
+- openwrt — full workflow skill hardened
+- pc-setup — Arch/CachyOS + Windows 11
+- amnezia-adguard — new skill
+- fabric-offline — aligned with 8GB VRAM + GoClaw provider URL
 
-- openwrt, pc-setup, backup, network-vpn, safety-confirm, admin-check, local-docs, coding-quality, model-router, fabric-offline (docs-level)
+## Still later (implementation, not just SKILL.md)
+1. **Fabric/model fetch scripts** with checksum + progress (launcher automation)
+2. **Offline docs pack** real content under `docs/**` (beyond README stubs)
+3. **Win11 end-to-end test** on real hardware
+4. **GoClaw skill auto-load** if upstream supports skill directories natively
 
-## Still later (implementation, not just SKILL text)
-
-1. **fabric-offline runtime** — auto download Fabric binary + model with checksum (FIRST-RUN deep path)
-2. **Offline docs pack** — fill `docs/openwrt`, `docs/cachyos-arch`, … with real offline mirrors
-3. **amnezia-adguard** — deeper guided setup when user has those products
-4. **Win11 launcher polish** — `launcher/start-windows.bat` + fetch AppImage equivalent if/when Windows Lite build exists
-
-Skills markdown can evolve without blocking cloud-Grok usage today.
+## Archive note
+Human20 MCP archive remains a source of patterns; production skills live in this `skills/` tree only.

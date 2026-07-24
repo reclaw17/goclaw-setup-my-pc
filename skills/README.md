@@ -1,26 +1,26 @@
 # Skills
 
-Agent tool instructions for GoClaw (the “brain”).
+Agent tools for the USB PC + router setup product.
 
-See **[INDEX.md](INDEX.md)** for when to load each skill.
-
-## Production set
+## Ready
 
 | Skill | Role |
 |-------|------|
-| safety-confirm | Confirm before changes |
-| admin-check | sudo / Administrator detection |
-| local-docs | Prefer offline `docs/` |
-| backup | OpenWrt/PC backups |
+| local-docs | Offline knowledge first |
+| safety-confirm | Explicit confirmation |
+| admin-check | Admin/sudo before elevated PC actions |
 | openwrt | Router workflow |
 | pc-setup | Arch/CachyOS + Windows 11 |
 | network-vpn | Network / VPN / DNS |
-| coding-quality | Safe scripts |
+| amnezia-adguard | AdGuard + Amnezia |
+| fabric-offline | Offline local model path |
 | model-router | Cloud vs local |
-| fabric-offline | Offline engine path |
+| backup | Backup/restore discipline |
+| coding-quality | Careful command generation |
+
+See **[INDEX.md](INDEX.md)**.
 
 ## Principle
 
-Skills guide the model.  
-PC system changes: **admin-check → safety-confirm → execute**.  
-OpenWrt: **backup → safety-confirm → execute**.
+The **model** is the brain; skills are procedures.  
+Any system change: `admin-check` + `safety-confirm` first.

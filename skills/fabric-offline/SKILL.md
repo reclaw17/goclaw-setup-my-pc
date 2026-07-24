@@ -1,45 +1,46 @@
 # fabric-offline
 
 **Status:** Production-ready  
-**Last update:** 2026-07-22
+**Last update:** 2026-07-24
 
 ## Purpose
-Manage the portable offline inference stack (Fabric + Qwen3.5-9B) when cloud models are unavailable.
+Run the **offline brain**: Fabric (or compatible OpenAI API server) + a **~9B Q4** class model that fits **8 GB VRAM / 16 GB RAM**.
 
 ## When to use
-- No internet connection
-- Cloud providers are unreachable
-- User explicitly requests local mode
+- No internet / cloud providers down
+- User asks for local-only mode
+- `model-router` selects local fallback
 
-## Required USB layout
-```
+## USB layout (expected)
+```text
 fabric/
-├── fabric-linux
-├── fabric-windows.exe
+  fabric-linux          # or platform binary
 models/
-└── qwen3.5-9b-q4_k_m.gguf
+  qwen3.5-9b-q4_k_m.gguf   # example name; verify checksum when downloading
 ```
+
+Binaries and GGUF are **not** in git — fetch scripts / Phase D downloaders place them.
 
 ## Workflow
-1. Detect absence of usable internet / cloud.
-2. Notify the user clearly:  
-   «Интернета нет. Переключаюсь на локальную модель Qwen3.5-9B.»
-3. Start Fabric as OpenAI-compatible server if it is not running.
-4. Load the model with settings safe for 8 GB VRAM.
-5. Switch active wrapper to `prompts/wrappers/qwen-local.md`.
-6. Continue working using only local skills and `docs/`.
-7. When internet returns — inform the user and offer to switch back to cloud.
+1. Detect offline or explicit local request.
+2. Tell the user clearly: local model mode (slower, less capable than Grok).
+3. If Fabric not listening on `http://127.0.0.1:8080` — start it with safe GPU/CPU settings for 8 GB VRAM.
+4. Ensure model file exists; if missing — explain how to download (do not start a broken server).
+5. In GoClaw, provider should be OpenAI-compatible:
+   - Base URL: `http://127.0.0.1:8080/v1`
+   - Key: `sk-local` (or from `.env` `LOCAL_LLM_API_KEY`)
+6. Prefer `prompts/wrappers/qwen-local.md` behavior: careful, smaller-scope tasks.
+7. When network returns — offer switch back to Grok/cloud.
 
 ## Strict rules
-- Never attempt to load a model that will not fit into 8 GB VRAM.
-- Prefer graceful degradation over crash.
-- Always tell the user the current mode (online / offline).
-- Unload the model when it is no longer needed.
+- Do not load models that will OOM 8 GB VRAM.
+- Prefer clear failure over silent hang.
+- Always state current mode: **online** vs **offline**.
+- Unload/stop Fabric when leaving local mode if the launcher supports it.
 
 ## Integration
-- Controlled by `model-router`
-- Uses `wrapper-qwen-local.md`
-- Works together with `local-docs`
+- `model-router`, `local-docs`, `coding-quality`
+- Launcher: `launcher/start-linux.sh` may auto-start Fabric if binary + model exist
 
-## Quality principle
-Reliability and transparency for a non-technical user are more important than maximum speed.
+## Quality bar
+Transparency for a non-technical user > maximum tokens/second.

@@ -1,22 +1,28 @@
-# Skills index (for the agent)
+# Skills index
 
-Load and obey these skills when the task matches.  
-**Priority:** `safety-confirm` + `admin-check` override speed.
+| Skill | Path | Role |
+|-------|------|------|
+| local-docs | `skills/local-docs/` | Prefer USB offline docs |
+| safety-confirm | `skills/safety-confirm/` | Confirm before changes |
+| admin-check | `skills/admin-check/` | sudo / Admin detection |
+| openwrt | `skills/openwrt/` | Router OpenWrt workflow |
+| pc-setup | `skills/pc-setup/` | Arch/CachyOS + Windows 11 PC |
+| network-vpn | `skills/network-vpn/` | Network, VPN, DNS |
+| amnezia-adguard | `skills/amnezia-adguard/` | AdGuard + Amnezia |
+| fabric-offline | `skills/fabric-offline/` | Local LLM fallback |
+| model-router | `skills/model-router/` | Cloud vs local routing |
+| backup | `skills/backup/` | Backup discipline |
+| coding-quality | `skills/coding-quality/` | Careful commands/code |
 
-| Skill | Use when |
-|-------|----------|
-| [safety-confirm](safety-confirm/SKILL.md) | Any system/router change |
-| [admin-check](admin-check/SKILL.md) | PC package/service/firewall needs elevation |
-| [local-docs](local-docs/SKILL.md) | Always prefer USB `docs/` before web |
-| [backup](backup/SKILL.md) | Before OpenWrt/PC risky changes |
-| [openwrt](openwrt/SKILL.md) | Router SSH, UCI, opkg, Wi-Fi, WAN, VPN |
-| [pc-setup](pc-setup/SKILL.md) | CachyOS/Arch or Windows 11 setup |
-| [network-vpn](network-vpn/SKILL.md) | VPN, DNS, Tailscale, routing |
-| [coding-quality](coding-quality/SKILL.md) | Generating scripts/commands |
-| [model-router](model-router/SKILL.md) | Choosing cloud vs local model |
-| [fabric-offline](fabric-offline/SKILL.md) | Offline Fabric path |
+## Loading
 
-## User profile
+GoClaw / agent should treat each `SKILL.md` as a tool description.  
+System-changing actions: **admin-check → safety-confirm → act**.
 
-- Non-developer; explain simply.
-- Cloud primary (Grok); local Fabric = fallback when offline (Phase D runtime).
+## Priority for this product
+
+1. safety-confirm + admin-check  
+2. local-docs  
+3. pc-setup / openwrt  
+4. network-vpn / amnezia-adguard  
+5. fabric-offline when offline  

@@ -2,27 +2,33 @@
 
 **Date:** 2026-07-24
 
-| Phase | Status |
+## Phase A — USB shell — DONE
+AppImage fetch/start/update, `.env.example`, gitignore.
+
+## Phase B — Providers — DONE
+Grok / OpenRouter / Fabric presets + [docs/PROVIDERS.md](docs/PROVIDERS.md).
+
+## Phase D — Skills pass — DONE (docs/skills layer)
+
+| Skill | Notes |
 |-------|--------|
-| A USB shell (AppImage prepare/start/update) | **Done** |
-| B Provider presets (Grok / OpenRouter / Fabric docs) | **Done** |
-| C No AppImage in git (fetch only) | **Done** |
-| D Skills hardening (INDEX + core SKILL.md) | **Done (slice)** |
-| D+ Fabric auto model + full offline docs pack | **Next** |
-| D+ Win11 portable engine parity | **Later** |
+| openwrt | Backup-first router workflow |
+| pc-setup | Arch/CachyOS + Win11 |
+| amnezia-adguard | New |
+| fabric-offline | 8GB VRAM offline path |
+| INDEX/README | Updated |
+
+## Still open (Phase D implementation)
+- Real offline doc bodies under `docs/**`
+- Fabric + GGUF download with checksum
+- Win11 test pass
 
 ## Run
 
 ```bash
 bash prepare.sh
-cp -n .env.example .env   # XAI_API_KEY
+cp -n .env.example .env   # XAI_API_KEY=...
 bash start.sh
 ```
 
-Providers: [docs/PROVIDERS.md](docs/PROVIDERS.md)  
-Skills: [skills/INDEX.md](skills/INDEX.md)  
-Plan: [docs/PLAN-goclaw-integration.md](docs/PLAN-goclaw-integration.md)
-
-## Packaging
-
-https://github.com/reclaw17/goclaw-lite-cachyos — v0.2.0-cachyos
+Packaging: https://github.com/reclaw17/goclaw-lite-cachyos/releases/tag/v0.2.0-cachyos
