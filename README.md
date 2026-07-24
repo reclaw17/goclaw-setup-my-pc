@@ -1,51 +1,59 @@
 # goclaw-setup-my-pc
 
-Портативный AI-агент для настройки ПК и OpenWrt-роутера (флешка).
+Portable AI agent for PC + OpenWrt setup from a USB stick.
 
-**Движок:** [GoClaw Lite AppImage](https://github.com/reclaw17/goclaw-lite-cachyos) (SQLite, без PostgreSQL).  
+**Engine:** [GoClaw Lite AppImage](https://github.com/reclaw17/goclaw-lite-cachyos) (SQLite, no PostgreSQL)  
 **Latest AppImage:** [v0.2.0-cachyos](https://github.com/reclaw17/goclaw-lite-cachyos/releases/tag/v0.2.0-cachyos)
 
-Опыт программирования **не обязателен**.
+No coding experience required.
 
----
-
-## Linux (CachyOS / Arch)
-
-```bash
-git clone https://github.com/reclaw17/goclaw-setup-my-pc.git
-cd goclaw-setup-my-pc
-
-# 1) скачать AppImage в apps/
-bash подготовить.sh
-
-# 2) ключи (Grok и т.д.)
-nano .env    # XAI_API_KEY=...
-
-# 3) запуск
-bash старт.sh
-```
-
-Обновить AppImage позже:
-
-```bash
-bash обновить.sh
-# или
-bash scripts/update-goclaw.sh
-```
+> **Repo language:** English first; Russian beginner path supported.  
+> Rules: [docs/REPO-RULES.md](docs/REPO-RULES.md)
 
 ---
 
 ## English
 
-1. `bash подготовить.sh` — downloads GoClaw Lite into `apps/`  
-2. Edit `.env` — cloud API keys  
-3. `bash старт.sh` — launches the AppImage  
+### Quick start (Linux / CachyOS / Arch)
 
-Layout: [USB-STRUCTURE.md](USB-STRUCTURE.md) · Plan: [docs/PLAN-goclaw-integration.md](docs/PLAN-goclaw-integration.md) · [STATUS.md](STATUS.md)
+```bash
+git clone https://github.com/reclaw17/goclaw-setup-my-pc.git
+cd goclaw-setup-my-pc
+bash подготовить.sh    # downloads AppImage into apps/
+# edit .env — set XAI_API_KEY=...
+bash старт.sh
+```
+
+Update AppImage later:
+
+```bash
+bash обновить.sh
+```
+
+### Docs
+
+- [USB-STRUCTURE.md](USB-STRUCTURE.md)
+- [docs/PLAN-goclaw-integration.md](docs/PLAN-goclaw-integration.md)
+- [docs/REPO-RULES.md](docs/REPO-RULES.md)
+- [STATUS.md](STATUS.md)
 
 ---
 
-## Important
+## Russian
 
-- Unofficial integration around community Lite packaging + upstream GoClaw.
-- No secrets in git. App bugs → upstream / lite packaging repos as appropriate.
+Портативный агент с флешки для настройки ПК и OpenWrt.
+
+**Движок:** GoClaw Lite (AppImage).  
+**Правила ведения репо (EN + RU):** [docs/REPO-RULES.md](docs/REPO-RULES.md)
+
+### Быстрый старт
+
+```bash
+git clone https://github.com/reclaw17/goclaw-setup-my-pc.git
+cd goclaw-setup-my-pc
+bash подготовить.sh
+# в .env добавь XAI_API_KEY=...
+bash старт.sh
+```
+
+Обновление AppImage: `bash обновить.sh`
