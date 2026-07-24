@@ -1,24 +1,14 @@
-# Missing / Custom Skills to Create
+# Missing / later
 
-Based on analysis of Human20 MCP archive (235 skills) + project requirements.
+## Done enough for MVP (Phase D skills slice)
 
-## Already adapted from archive / ready sources
-- local-docs ← chip-docs-local
-- backup ← backup-manager
-- model-router ← auto-model-router
-- safety-confirm ← clawguard + openclaw-safe-update
-- coding-quality ← superpowers + workshop-shaw-coding-standard + repo-task-proof-loop
-- network-vpn ← tailscale-as-exit-node + openclaw-tailscale-remote-access
+- openwrt, pc-setup, backup, network-vpn, safety-confirm, admin-check, local-docs, coding-quality, model-router, fabric-offline (docs-level)
 
-## Still missing (need custom development)
-1. **openwrt-full** — complete OpenWrt workflow: connect, backup/restore, packages update, Wi-Fi, internet, VPN, DNS, high-level RKN/bypass strategy (no ready skill in archive covers full router setup).
-2. **pc-setup-arch** — CachyOS / Arch specific: console package install, drivers, network, diagnostics.
-3. **pc-setup-windows** — Windows 11 specific: winget, drivers, VPN, diagnostics (partially covered by openclaw-windows-node).
-4. **amnezia-adguard** — deep setup for Amnezia Premium + AdGuard Home / VPN / DNS.
-5. **fabric-offline** — integration of Fabric (QVAC) as portable offline engine + model loading/unloading on 8GB VRAM.
-6. **launcher-bootstrap** — USB launcher scripts + hardware detection.
+## Still later (implementation, not just SKILL text)
 
-## Plan
-1. Improve existing SKILL.md stubs with more details from archive.
-2. Create high-quality custom skills for the missing items above (starting with openwrt-full and fabric-offline).
-3. Test offline flow with real model on target hardware.
+1. **fabric-offline runtime** — auto download Fabric binary + model with checksum (FIRST-RUN deep path)
+2. **Offline docs pack** — fill `docs/openwrt`, `docs/cachyos-arch`, … with real offline mirrors
+3. **amnezia-adguard** — deeper guided setup when user has those products
+4. **Win11 launcher polish** — `launcher/start-windows.bat` + fetch AppImage equivalent if/when Windows Lite build exists
+
+Skills markdown can evolve without blocking cloud-Grok usage today.
