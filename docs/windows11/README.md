@@ -17,22 +17,22 @@ ipconfig /all
 Get-NetAdapter
 ```
 
-## GoClaw / agent on Windows (honest)
+## GoClaw on Windows (aligned with upstream)
+
+Official Lite installer (`install-lite.ps1` / zip) is documented by upstream for Windows **when release assets exist**.  
+As of audit 2026-07-24, recent GitHub releases did **not** list `lite-v*` desktop assets — treat Windows GUI as **best-effort / watch upstream**.
 
 | Piece | Status |
 |-------|--------|
-| Linux AppImage GUI | **Production** path (CachyOS/Arch) |
-| Windows GoClaw Lite GUI | **Not** shipped by our `goclaw-lite-cachyos` factory yet |
-| Offline LLM on Windows | **Yes** — `fabric\win` + `models\*.gguf` |
-| Cloud | **Yes** — API keys in `.env` (Grok etc.) |
+| **Linux AppImage (this project)** | Production path for CachyOS/Arch |
+| **Official Lite macOS** | Upstream `install-lite.sh` |
+| **Official Lite Windows** | Upstream zip when published |
+| **Offline LLM on Windows** | `fabric\win` + `models\*.gguf` |
+| **Cloud** | API keys in `.env` |
 
-Practical options on Win11:
-1. Cloud API in GoClaw when a Windows build exists upstream, or any OpenAI-compatible client.  
-2. Offline: start local server from `fabric\win`, point client to `http://127.0.0.1:8080/v1`.  
-3. Advanced: WSL2 + Linux AppImage from `apps/`.
+Practical options today:
+1. Cloud APIs from any OpenAI-compatible client.  
+2. Local server under `fabric\win` → `http://127.0.0.1:8080/v1`.  
+3. WSL2 + Linux AppImage from `apps/`.
 
-Prepare on Windows: `prepare.bat` (creates folders + `.env`).  
-Fetch Fabric zip on a Linux machine for the stick: `bash scripts/fetch-fabric.sh windows` then copy `fabric/win` to the USB.
-
-## VPN / DNS
-Official AdGuard / Amnezia / WireGuard clients. See `docs/adguard/`, `docs/amnezia/`.
+See `docs/GOCLAW-OFFICIAL.md`, `docs/EMBED.md`.
