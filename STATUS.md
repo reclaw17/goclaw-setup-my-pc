@@ -2,28 +2,18 @@
 
 **Date:** 2026-07-24
 
-## Capacity
+## USB 32 GB policy
 
-USB kit **32 GB** — full offline stack + full useful Human20 skill clones **on the stick** are OK.  
-Git remains without AppImage/GGUF/vendor. Policy: [docs/USB-CAPACITY.md](docs/USB-CAPACITY.md).
+- **`.env` on stick** with model + **Perplexity** keys ([docs/SECRETS.md](docs/SECRETS.md))  
+- **Full offline docs** including **GoClaw** mirror: `bash scripts/fetch-offline-docs.sh`  
+- Full skills on stick via `fetch-human20-skill.sh`  
+- Git never gets `.env`, AppImage, GGUF, or `docs/mirrors/`  
 
-## Phases A–D — done
-
-Shell, providers, fetch scripts, procedure pack.
-
-## Skills policy
-
-- **Procedure pack** in git (`skills/*/SKILL.md`) — always  
-- **Full skills** on USB via `scripts/fetch-human20-skill.sh` — **encouraged** (32 GB)  
-
-## Next (E)
-
-Bootstrap + loader wiring + default vendor shortlist on stick.
-
-## Run
+## A–D done · E next
 
 ```bash
 FETCH_OFFLINE=1 bash prepare.sh
-bash scripts/fetch-human20-skill.sh chip-docs-local
+bash scripts/fetch-offline-docs.sh
+cp -n .env.example .env
 bash start.sh
 ```

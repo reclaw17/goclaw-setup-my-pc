@@ -1,48 +1,37 @@
-# Secrets
+# Secrets — never commit real keys (USB-only)
 .env
 *.env
 !.env.example
 
-# GoClaw AppImage (download via prepare.sh — do not commit ~120MB)
+# GoClaw AppImage
 apps/*.AppImage
 apps/*.AppImage.bak*
 apps/.goclaw-lite-version
 
-# Full Human20 / upstream skill clones (optional)
+# Full skill clones
 skills/vendor/
 
-# Models (too large for git)
+# Offline doc mirrors (GoClaw upstream, chip mirrors)
+docs/mirrors/
+docs/FILELIST.md
+
+# Models / fabric
 models/
 *.gguf
-*.bin
-*.safetensors
-
-# Fabric binaries
 fabric/bin/
-fabric/*.exe
 fabric/*-linux
-fabric/*-windows*
 fabric/win/
+fabric/*.exe
 
-# Huge doc mirrors (chip-docs-local output)
-docs/mirrors/
-
-# OS / editor
 .DS_Store
 Thumbs.db
 Desktop.ini
 .vscode/
 .idea/
-*.swp
-*.swo
 tmp/
-temp/
-*.tmp
 *.log
 node_modules/
 __pycache__/
-*.pyc
 .venv/
-venv/
 dist/
 build/

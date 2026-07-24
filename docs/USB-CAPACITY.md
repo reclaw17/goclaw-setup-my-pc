@@ -1,38 +1,39 @@
 # USB capacity (32 GB)
 
-User kit target: **~32 GB** flash drive. **Do not under-fill** the stick out of caution.
-
 ## Policy
 
-| Store | On USB (32 GB) | In git |
-|-------|----------------|--------|
-| GoClaw AppImage (~120 MB) | **Yes** | No |
-| Fabric binaries | **Yes** | No |
-| Local GGUF model (~5–6 GB) | **Yes** | No |
-| Full Human20 skill trees (`skills/vendor/`) | **Yes** | No (clone on stick) |
-| Offline doc mirrors (`docs/mirrors/`) | **Yes** | No if huge |
-| Procedure pack `skills/*/SKILL.md` | Yes | **Yes** |
-| Scripts, bootstrap, thin docs | Yes | **Yes** |
-| Real `.env` secrets | Yes (private) | **Never** |
+| Store | On USB | In git |
+|-------|--------|--------|
+| GoClaw AppImage | **Yes** | No |
+| Fabric + GGUF model | **Yes** | No |
+| Full Human20 skills (`skills/vendor/`) | **Yes** | No |
+| **Full offline docs** incl. **GoClaw** (`docs/mirrors/`) | **Yes** | No (mirrors) |
+| **`.env` with API keys** (models + Perplexity) | **Yes** | **Never** |
+| Procedure pack, scripts, thin docs | Yes | Yes |
 
-Rough budget on a 32 GB stick (exFAT/ext4):
+## `.env` on the stick
 
-```text
-AppImage + Fabric     ~0.2 GB
-Qwen3.5 9B Q4         ~5–6 GB
-Skill vendor clones   ~0.1–1 GB
-Doc mirrors           optional several GB
-Free space            plenty for backups / OpenWrt dumps
+```bash
+cp -n .env.example .env
+# edit .env on the USB — keys stay on the stick only
 ```
 
-## Default recommendation (Linux prepare)
+Typical keys: `XAI_API_KEY`, `OPENROUTER_API_KEY`, `QWEN_API_KEY`, `MINIMAX_API_KEY`, `PERPLEXITY_API_KEY`, local Fabric URL.
+
+## Offline docs
+
+```bash
+bash scripts/fetch-offline-docs.sh
+```
+
+See [OFFLINE-DOCS.md](OFFLINE-DOCS.md).
+
+## Fill stick
 
 ```bash
 FETCH_OFFLINE=1 bash prepare.sh
+bash scripts/fetch-offline-docs.sh
 bash scripts/fetch-human20-skill.sh chip-docs-local
 bash scripts/fetch-human20-skill.sh backup-manager
-bash scripts/fetch-human20-skill.sh auto-model-router
-bash scripts/fetch-human20-skill.sh repo-task-proof-loop
+cp -n .env.example .env   # fill keys on USB
 ```
-
-Full skills are **first-class on the stick**; procedure pack remains the always-present baseline in git.
