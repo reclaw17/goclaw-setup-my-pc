@@ -1,67 +1,51 @@
 # goclaw-setup-my-pc
 
-Портативный AI-агент для настройки компьютера и OpenWrt-роутера.
+Портативный AI-агент для настройки ПК и OpenWrt-роутера (флешка).
 
-Работает с флешки.  
-Подходит даже если у тебя **нет опыта в программировании**.
+**Движок:** [GoClaw Lite AppImage](https://github.com/reclaw17/goclaw-lite-cachyos) (SQLite, без PostgreSQL).  
+**Latest AppImage:** [v0.2.0-cachyos](https://github.com/reclaw17/goclaw-lite-cachyos/releases/tag/v0.2.0-cachyos)
+
+Опыт программирования **не обязателен**.
 
 ---
 
-## Как запустить (Linux)
+## Linux (CachyOS / Arch)
 
-Открой терминал **в папке проекта** и выполни:
-
-### 1. Подготовка (один раз)
 ```bash
+git clone https://github.com/reclaw17/goclaw-setup-my-pc.git
+cd goclaw-setup-my-pc
+
+# 1) скачать AppImage в apps/
 bash подготовить.sh
-```
 
-Скрипт сам спросит:
-- скачать программы? **да/нет**
-- скачать модель (~5.7 ГБ)? **да/нет**
+# 2) ключи (Grok и т.д.)
+nano .env    # XAI_API_KEY=...
 
-Покажет прогресс загрузки.
-
-### 2. Запуск
-```bash
+# 3) запуск
 bash старт.sh
 ```
 
-### 3. Обновление (позже)
+Обновить AppImage позже:
+
 ```bash
 bash обновить.sh
+# или
+bash scripts/update-goclaw.sh
 ```
 
 ---
 
-## Как запустить (Windows)
+## English
 
-1. `подготовить.bat`
-2. `старт.bat`
-3. при необходимости `обновить.bat`
+1. `bash подготовить.sh` — downloads GoClaw Lite into `apps/`  
+2. Edit `.env` — cloud API keys  
+3. `bash старт.sh` — launches the AppImage  
 
----
-
-## Важно
-
-1. Запускай скрипты **из папки проекта**
-2. Файл `.env` — личный, не выкладывай его
-3. Перед настройкой роутера агент должен предложить бэкап
-4. Опасные команды выполняются только после твоего «да»
+Layout: [USB-STRUCTURE.md](USB-STRUCTURE.md) · Plan: [docs/PLAN-goclaw-integration.md](docs/PLAN-goclaw-integration.md) · [STATUS.md](STATUS.md)
 
 ---
 
-## Если что-то не работает
+## Important
 
-1. Снова запусти `bash подготовить.sh`
-2. На вопросы отвечай `да`
-3. Дождись окончания загрузки
-4. Потом `bash старт.sh`
-
-Не нужно вручную писать `FETCH_BINARIES=1` — это уже внутри `подготовить.sh`.
-
----
-
-## Лицензия
-
-MIT
+- Unofficial integration around community Lite packaging + upstream GoClaw.
+- No secrets in git. App bugs → upstream / lite packaging repos as appropriate.

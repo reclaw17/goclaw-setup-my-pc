@@ -1,46 +1,31 @@
-# USB Flash Drive Structure
+# USB structure (Phase A — GoClaw Lite AppImage)
 
-```
-USB:/
-│
-├── goclaw/                     ← binary from fork / pinned release
-│   ├── goclaw-linux
-│   └── goclaw-windows.exe
-│
-├── fabric/                     ← binary from fork / pinned release
-│   ├── fabric-linux
-│   └── fabric-windows.exe
-│
-├── models/                     ← empty at first; auto-download on first run
-│   └── qwen3.5-9b-q4_k_m.gguf  ← appears after first launch
-│
-├── docs/                       ← offline documentation
-│   ├── openwrt/
-│   ├── cachyos-arch/
-│   ├── windows11/
-│   ├── adguard/
-│   ├── amnezia/
-│   └── custom/
-│
-├── skills/                     ← agent skills
-├── prompts/                    ← system-common + model wrappers
+```text
+USB/  (or this repo cloned on a stick)
+├── apps/
+│   └── GoClaw-Lite-x86_64.AppImage   ← from goclaw-lite-cachyos Releases
 ├── config/
+├── scripts/
+│   ├── fetch-goclaw-appimage.sh
+│   ├── update-goclaw.sh
+│   └── ...
 ├── launcher/
-│   ├── start-linux.sh
-│   └── start-windows.bat
-│
-├── .env                        ← secrets (local only, never in git)
+│   └── start-linux.sh               ← prefers AppImage
+├── skills/
+├── docs/
+├── models/                          ← later (Fabric offline)
+├── fabric/                          ← later
 ├── .env.example
-└── README.txt
+├── .env                             ← local secrets only
+├── подготовить.sh
+├── старт.sh
+└── обновить.sh
 ```
 
-## Key principles
+## Principles
 
-1. **Binaries** come from fork / pinned GitHub Releases (not committed as large blobs if avoidable).
-2. **Model** is auto-downloaded on first run (QVAC-style).
-3. **Secrets** stay only in `.env`.
-4. **docs/custom/** is writable by the user.
-
-## First run
-
-See `FIRST-RUN.md`.
+1. **Engine** = GoClaw **Lite** AppImage (SQLite, no PostgreSQL).
+2. AppImage comes from https://github.com/reclaw17/goclaw-lite-cachyos/releases (Latest: **v0.2.0-cachyos**).
+3. Do not commit the binary to git.
+4. Secrets only in `.env`.
+5. Skills / OpenWrt / Fabric = later phases.

@@ -13,25 +13,28 @@ fi
 cd "$(cd "$(dirname "$0")" && pwd)"
 export IN_TERMINAL=1
 
-echo "==> Запуск помощника"
+echo "==> USB agent start"
 echo
 
-if [[ ! -f goclaw/goclaw-linux ]]; then
-  echo "==> Сначала нужна подготовка"
-  echo "==> Запусти: bash подготовить.sh"
+APP="apps/GoClaw-Lite-x86_64.AppImage"
+if [[ ! -f "$APP" && ! -f goclaw/goclaw-linux ]]; then
+  echo "==> GoClaw not found. Run prepare first:"
+  echo "    bash подготовить.sh"
+  echo "    or: bash scripts/fetch-goclaw-appimage.sh"
   echo
-  echo "==> Нажмите Enter для выхода"
+  echo "==> Press Enter to exit"
   read -r _
   exit 1
 fi
 
 if [[ ! -f .env && -f .env.example ]]; then
   cp .env.example .env
+  echo "==> Created .env from .env.example — add your API keys"
 fi
 
-chmod +x goclaw/goclaw-linux fabric/fabric-linux launcher/start-linux.sh scripts/run-in-terminal.sh 2>/dev/null || true
+chmod +x "$APP" goclaw/goclaw-linux fabric/fabric-linux launcher/start-linux.sh scripts/*.sh 2>/dev/null || true
 
-echo "==> Стартую..."
+echo "==> Starting..."
 echo
 set +e
 bash launcher/start-linux.sh
@@ -40,10 +43,10 @@ set -e
 
 echo
 if [[ "$status" -eq 0 ]]; then
-  echo "==> Завершено"
+  echo "==> Done"
 else
-  echo "==> Завершено с ошибкой (код $status)"
+  echo "==> Exit code $status"
 fi
-echo "==> Нажмите Enter для выхода"
+echo "==> Press Enter to exit"
 read -r _
 exit "$status"
