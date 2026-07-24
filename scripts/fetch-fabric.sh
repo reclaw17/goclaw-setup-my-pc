@@ -1,78 +1,86 @@
 #!/usr/bin/env bash
-# Download Fabric / llama.cpp Vulkan binaries (Linux + optional Windows zip)
+# Download pinned Fabric/llama.cpp Vulkan builds into fabric/
+# Linux: fabric/fabric-linux  |  Windows zip extracted under fabric/win/
 set -euo pipefail
+
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 mkdir -p fabric
 
-# Pinned QVAC Fabric release (llama.cpp-compatible server tools)
+OS="${1:-linux}"   # linux | windows
 FABRIC_TAG="${FABRIC_TAG:-b7349}"
-FABRIC_LINUX_URL="${FABRIC_LINUX_URL:-https://github.com/tetherto/qvac-fabric-llm.cpp/releases/download/${FABRIC_TAG}/llama-${FABRIC_TAG}-bin-ubuntu-vulkan-x64.tar.gz}"
-FABRIC_LINUX_SHA="${FABRIC_LINUX_SHA:-fb42fb4f4b3ae623ba606f7bbbaebe620be4966e04a95a30b0fb6f9b670ce12a}"
-FABRIC_WIN_URL="${FABRIC_WIN_URL:-https://github.com/tetherto/qvac-fabric-llm.cpp/releases/download/${FABRIC_TAG}/llama-${FABRIC_TAG}-bin-win-vulkan-x64.zip}"
-FABRIC_WIN_SHA="${FABRIC_WIN_SHA:-eb52db3cee6937edbf727a1ecf9a2eb9204e0a13c14c7e4ba78c83815d81d0bc}"
 
-log() { echo "==> $*"; }
-err() { echo "==> ERROR: $*" >&2; exit 1; }
+FABRIC_LINUX_URL="https://github.com/tetherto/qvac-fabric-llm.cpp/releases/download/${FABRIC_TAG}/llama-${FABRIC_TAG}-bin-ubuntu-vulkan-x64.tar.gz"
+FABRIC_LINUX_SHA="fb42fb4f4b3ae623ba606f7bbbaebe620be4966e04a95a30b0fb6f9b670ce12a"
+FABRIC_WIN_URL="https://github.com/tetherto/qvac-fabric-llm.cpp/releases/download/${FABRIC_TAG}/llama-${FABRIC_TAG}-bin-win-vulkan-x64.zip"
+FABRIC_WIN_SHA="eb52db3cee6937edbf727a1ecf9a2eb9204e0a13c14c7e4ba78c83815d81d0bc"
 
-sha256_of() {
-  if command -v sha256sum >/dev/null 2>&1; then sha256sum "$1" | awk '{print $1}'
-  elif command -v shasum >/dev/null 2>&1; then shasum -a 256 "$1" | awk '{print $1}'
-  else err "need sha256sum or shasum"; fi
+verify_sha256() {
+  local file="$1" expected="$2" actual
+  if command -v sha256sum >/dev/null 2>&1; then
+    actual="$(sha256sum "$file" | awk '{print $1}')"
+  else
+    actual="$(shasum -a 256 "$file" | awk '{print $1}')"
+  fi
+  if [[ "$actual" != "$expected" ]]; then
+    echo "==> ERROR: SHA256 mismatch for $file"
+    echo "    expected $expected"
+    echo "    got      $actual"
+    exit 1
+  fi
+  echo "==> SHA256 OK"
 }
 
-install_linux() {
-  local marker="fabric/.fabric-linux-${FABRIC_TAG}"
-  if [[ -x fabric/llama-server || -x fabric/fabric-linux ]] && [[ -f "$marker" ]]; then
-    log "Linux Fabric tools already present ($FABRIC_TAG)"
-    return 0
-  fi
-  log "Downloading Fabric Linux Vulkan ($FABRIC_TAG)"
-  local tmp tdir
-  tmp="$(mktemp)"
-  tdir="$(mktemp -d)"
-  curl -fL --progress-bar -o "$tmp" "$FABRIC_LINUX_URL" || { rm -f "$tmp"; err "linux download failed"; }
-  got="$(sha256_of "$tmp")"
-  [[ "$got" == "$FABRIC_LINUX_SHA" ]] || { rm -f "$tmp"; err "linux SHA mismatch"; }
-  tar -xzf "$tmp" -C "$tdir"
-  # Prefer llama-server if present
-  find "$tdir" -type f -name 'llama-server' -executable | head -1 | while read -r f; do cp -f "$f" fabric/llama-server; chmod +x fabric/llama-server; done
-  find "$tdir" -type f \( -name 'llama-*' -o -name 'fabric*' \) -executable 2>/dev/null | while read -r f; do
-    base="$(basename "$f")"
-    cp -f "$f" "fabric/$base"
-    chmod +x "fabric/$base"
-  done
-  if [[ -x fabric/llama-server ]]; then
-    ln -sfn llama-server fabric/fabric-linux
-  fi
-  echo "$FABRIC_TAG" > "$marker"
-  rm -rf "$tmp" "$tdir"
-  log "Linux Fabric ready under fabric/"
-  ls -la fabric/ | head -20
+download() {
+  local url="$1" out="$2"
+  echo "==> Download: $url"
+  curl -fL --progress-bar --retry 3 --retry-delay 2 -o "$out" "$url"
 }
 
-install_windows_zip() {
-  # Optional: store Windows zip tools on a Linux USB for dual-boot sticks
-  if [[ "${FETCH_WIN_FABRIC:-0}" != "1" ]]; then
-    return 0
+if [[ "$OS" == "windows" ]]; then
+  if [[ -x fabric/win/llama-server.exe ]] || [[ -f fabric/win/llama-server.exe ]]; then
+    echo "==> Windows Fabric already present under fabric/win/"
+    exit 0
   fi
-  local marker="fabric/.fabric-win-${FABRIC_TAG}"
-  [[ -f "$marker" ]] && { log "Windows Fabric zip already fetched"; return 0; }
-  log "Downloading Fabric Windows Vulkan zip"
-  local tmp
   tmp="$(mktemp)"
-  curl -fL --progress-bar -o "$tmp" "$FABRIC_WIN_URL" || { rm -f "$tmp"; err "win download failed"; }
-  got="$(sha256_of "$tmp")"
-  [[ "$got" == "$FABRIC_WIN_SHA" ]] || { rm -f "$tmp"; err "win SHA mismatch"; }
+  download "$FABRIC_WIN_URL" "$tmp"
+  verify_sha256 "$tmp" "$FABRIC_WIN_SHA"
+  rm -rf fabric/win
   mkdir -p fabric/win
-  if command -v unzip >/dev/null 2>&1; then unzip -qo "$tmp" -d fabric/win
-  else log "unzip missing — left archive as fabric/win-fabric.zip"; mv -f "$tmp" fabric/win-fabric.zip; echo "$FABRIC_TAG" > "$marker"; return 0; fi
+  if command -v unzip >/dev/null 2>&1; then
+    unzip -q "$tmp" -d fabric/win
+  else
+    echo "==> ERROR: need unzip"; rm -f "$tmp"; exit 1
+  fi
   rm -f "$tmp"
-  echo "$FABRIC_TAG" > "$marker"
-  log "Windows Fabric extracted to fabric/win/"
-}
+  echo "==> Extracted to fabric/win/"
+  find fabric/win -maxdepth 3 -type f -name 'llama*' | head
+  exit 0
+fi
 
-install_linux
-install_windows_zip
-log "Done. Start server example:"
-echo "  ./fabric/llama-server -m models/qwen3.5-9b-q4_k_m.gguf --port 8080 --host 127.0.0.1"
+# linux default
+if [[ -x fabric/fabric-linux ]]; then
+  echo "==> fabric/fabric-linux already present"
+  ls -lh fabric/fabric-linux
+  exit 0
+fi
+
+tmp="$(mktemp)"
+tdir="$(mktemp -d)"
+download "$FABRIC_LINUX_URL" "$tmp"
+verify_sha256 "$tmp" "$FABRIC_LINUX_SHA"
+tar -xzf "$tmp" -C "$tdir"
+# find a sensible binary
+bin="$(find "$tdir" -type f -name 'llama-server' | head -n 1 || true)"
+if [[ -z "$bin" ]]; then
+  bin="$(find "$tdir" -type f -executable | head -n 1 || true)"
+fi
+if [[ -z "$bin" || ! -f "$bin" ]]; then
+  echo "==> ERROR: no binary in archive"; rm -rf "$tmp" "$tdir"; exit 1
+fi
+cp -f "$bin" fabric/fabric-linux
+chmod +x fabric/fabric-linux
+rm -rf "$tmp" "$tdir"
+echo "==> Saved fabric/fabric-linux"
+ls -lh fabric/fabric-linux
+echo "$FABRIC_TAG" > fabric/.fabric-version

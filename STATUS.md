@@ -2,36 +2,37 @@
 
 **Date:** 2026-07-24
 
-## Phases
+## Phase A — USB shell — DONE
+AppImage fetch/start/update, `.env`, gitignore.
 
-| Phase | Status |
-|-------|--------|
-| A USB shell + AppImage | **Done** |
-| B Provider presets | **Done** |
-| C No 120MB binary in git | **Done** |
-| D Skills + docs + offline fetch + Win honesty | **Done (this pass)** |
+## Phase B — Providers — DONE
+Grok / OpenRouter / Fabric presets + `docs/PROVIDERS.md`.
 
-## Phase D deliverables
+## Phase D — DONE (implementation layer)
 
-- Real offline notes: `docs/openwrt`, `cachyos-arch`, `windows11`, `adguard`, `amnezia`
-- `scripts/fetch-model.sh` — SHA256 pinned
-- `scripts/fetch-fabric.sh` — Fabric/llama Vulkan b7349 + SHA
-- `scripts/fetch-offline-stack.sh` — both
-- Windows: `prepare.bat` / `launcher/start-windows.bat` + `scripts/fetch-goclaw-windows.md` (GUI = Linux AppImage; Win = Fabric/model + honest limits)
+| Item | Status |
+|------|--------|
+| Skills (openwrt, pc-setup, amnezia, fabric-offline, …) | Done |
+| Real notes under `docs/**` | Done |
+| `scripts/fetch-fabric.sh` + SHA256 | Done |
+| `scripts/fetch-model.sh` + SHA256 | Done |
+| `scripts/fetch-offline-stack.sh` | Done |
+| Embed layout documented | `docs/EMBED.md` |
+| `prepare.sh` optional offline fetch | Done |
+| Win11 honesty + folders | `docs/windows11`, `prepare.bat` |
 
-## Run (Linux — primary)
+### Still hardware-dependent
+- Full Win11 GUI GoClaw Lite binary (upstream/factory gap) — use cloud client, `fabric\win`, or WSL+AppImage
+- Real-device QA on each user's PC/router
+
+## Run (Linux)
 
 ```bash
-bash prepare.sh
-cp -n .env.example .env   # XAI_API_KEY=
+bash prepare.sh                    # AppImage; ask for Fabric+model
+# or forced offline stack:
+FETCH_OFFLINE=1 bash prepare.sh
 bash start.sh
-# optional offline stack:
-bash scripts/fetch-offline-stack.sh
 ```
 
-## Run (Windows 11)
-
-```bat
-prepare.bat
-REM Full GoClaw GUI still Linux-first — see scripts\fetch-goclaw-windows.md
-```
+## Packaging factory
+https://github.com/reclaw17/goclaw-lite-cachyos/releases/tag/v0.2.0-cachyos

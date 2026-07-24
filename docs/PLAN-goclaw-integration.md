@@ -1,24 +1,22 @@
 # Plan: embed GoClaw Lite into main USB agent
 
-Updated: 2026-07-24 — Phases A–D complete at repo level
+**Phases A–D: complete** (2026-07-24)
 
-## Repos
+| Phase | Status |
+|-------|--------|
+| A USB + start/update + env | Done |
+| B Provider presets | Done |
+| C AppImage via Releases (not in git) | Done |
+| D Skills + docs + Fabric/model fetch + Win notes | Done |
 
-- **goclaw-lite-cachyos** — AppImage factory (v0.2.0-cachyos)
-- **goclaw-setup-my-pc** — USB agent (this repo)
+## Embed rule
+Programs live **inside project folders** (`apps/`, `fabric/`, `models/`) on the USB,  
+downloaded by scripts with checksums — **not** committed to git.
 
-## Order (done)
+See [EMBED.md](EMBED.md).
 
-1. Wrap Lite — structure + start/update + env  
-2. Skills / OpenWrt docs / Fabric+model fetch / Win11 honest path  
-
-## Platform truth
-
-| OS | GoClaw GUI | Offline LLM |
-|----|------------|-------------|
-| Linux | AppImage **yes** | Fabric + GGUF **yes** |
-| Windows 11 | No Lite AppImage yet | Fabric zip + GGUF **yes** |
-
-## Secrets
-
-Only `.env` (from `.env.example`). Never commit keys.
+## Run
+```bash
+bash prepare.sh
+bash start.sh
+```

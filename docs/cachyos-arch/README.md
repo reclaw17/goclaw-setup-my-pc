@@ -1,44 +1,45 @@
 # CachyOS / Arch Linux — offline notes
 
 ## Safety
-- Need elevation → check admin/sudo first.
+- Elevation → admin/sudo check first.
 - Show full commands before running.
-- Prefer `pacman` official repos over random scripts.
+- Prefer official `pacman` repos.
 
-## Update system
+## System update
 ```bash
 sudo pacman -Syu
 ```
 
 ## Install packages
 ```bash
-sudo pacman -S <packages>
+sudo pacman -S package1 package2
 ```
 
 ## Network
 ```bash
 ip a
-# NetworkManager:
 nmcli device status
 nmcli connection show
 ```
 
-## Drivers (high level)
-1. Identify GPU: `lspci | grep -i vga`
-2. Prefer distro packages (CachyOS/Arch NVIDIA/AMD stacks).
-3. Avoid proprietary `.run` installers unless user accepts the risk.
-
-## Logs
+## GPU / drivers
 ```bash
-journalctl -b -p err..alert --no-pager | tail -n 50
+lspci | grep -iE 'vga|3d|display'
 ```
+Prefer distro NVIDIA/AMD stacks (CachyOS/Arch packages), not random `.run` files.
 
-## Disk
+## Logs / disk
 ```bash
+journalctl -b -p err..alert --no-pager | tail -n 80
 df -h
-# if btrfs:
 findmnt /
 ```
 
-## Agent on this OS
-Primary path: GoClaw **Lite AppImage** via `bash prepare.sh` && `bash start.sh`.
+## This agent on Linux
+```bash
+bash prepare.sh          # apps/GoClaw-Lite-x86_64.AppImage
+# optional offline brain:
+bash scripts/fetch-offline-stack.sh linux
+bash start.sh
+```
+See `docs/EMBED.md`.

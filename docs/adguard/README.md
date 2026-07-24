@@ -1,21 +1,22 @@
 # AdGuard — offline notes
 
-## Products (pick one goal at a time)
-- **AdGuard Home** — LAN-wide DNS filtering (runs on PC/NAS/router).
-- **AdGuard DNS / apps** — device-level filtering or DNS service.
-- **AdGuard VPN** — separate from Home; do not confuse with DNS-only setup.
+## Products (one goal at a time)
+- **AdGuard Home** — DNS filtering for the LAN (PC/NAS/router).
+- **AdGuard DNS / apps** — per-device filtering.
+- **AdGuard VPN** — not the same as Home; do not mix instructions blindly.
 
 ## Safety
-- Changing system DNS can break internet — keep a rollback (e.g. DHCP/automatic DNS).
-- Set a strong AdGuard Home admin password.
-- Install only from official AdGuard sources.
+- Changing DNS can break internet — write down how to revert to automatic/DHCP DNS.
+- Strong admin password on AdGuard Home.
+- Official downloads only.
 
-## Typical Home flow
-1. Install on a always-on machine in the LAN.
-2. Open web UI, set password.
-3. Point **one test client** DNS to that machine.
-4. If OK, set router DHCP DNS for the LAN.
-5. Export/backup config if the UI provides it.
+## AdGuard Home (short flow)
+1. Install on an always-on host in the LAN.
+2. Open web UI → set password.
+3. Point **one test device** DNS to that host.
+4. If OK, set router DHCP DNS for the whole LAN.
+5. Export config/backup if UI supports it.
 
 ## With VPN
-Order matters: document whether DNS is via VPN provider, AdGuard, or split. Avoid loops.
+State the order: VPN DNS vs AdGuard vs ISP. Avoid DNS loops.  
+Skill: `skills/amnezia-adguard/SKILL.md`.

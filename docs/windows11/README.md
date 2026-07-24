@@ -1,32 +1,38 @@
 # Windows 11 — offline notes
 
 ## Safety
-- Elevated actions need Administrator.
-- Prefer **winget** / official installers.
-- No registry mass-edits without explicit confirmation.
+- Administrator for system changes.
+- Prefer **winget** and official installers.
+- No mass registry edits without confirmation.
 
-## Package install (when winget exists)
+## Packages
 ```powershell
 winget search <name>
 winget install <id>
 ```
 
-## Network diagnostics
+## Network
 ```powershell
 ipconfig /all
 Get-NetAdapter
 ```
 
-## GoClaw status on Windows
-See **[scripts/fetch-goclaw-windows.md](../../scripts/fetch-goclaw-windows.md)**:
+## GoClaw / agent on Windows (honest)
 
-- Full GUI agent is **production on Linux AppImage**.
-- Windows: use cloud clients + optional local Fabric; track upstream for Windows desktop builds.
+| Piece | Status |
+|-------|--------|
+| Linux AppImage GUI | **Production** path (CachyOS/Arch) |
+| Windows GoClaw Lite GUI | **Not** shipped by our `goclaw-lite-cachyos` factory yet |
+| Offline LLM on Windows | **Yes** — `fabric\win` + `models\*.gguf` |
+| Cloud | **Yes** — API keys in `.env` (Grok etc.) |
 
-## Local LLM on Windows
-1. Run `prepare.bat` (Fabric + model when configured).
-2. Start `llama-server` (or Fabric binary) on `127.0.0.1:8080`.
-3. Point OpenAI-compatible UI to `http://127.0.0.1:8080/v1`.
+Practical options on Win11:
+1. Cloud API in GoClaw when a Windows build exists upstream, or any OpenAI-compatible client.  
+2. Offline: start local server from `fabric\win`, point client to `http://127.0.0.1:8080/v1`.  
+3. Advanced: WSL2 + Linux AppImage from `apps/`.
+
+Prepare on Windows: `prepare.bat` (creates folders + `.env`).  
+Fetch Fabric zip on a Linux machine for the stick: `bash scripts/fetch-fabric.sh windows` then copy `fabric/win` to the USB.
 
 ## VPN / DNS
-Prefer official AdGuard / Amnezia / WireGuard clients. See `docs/adguard/`, `docs/amnezia/`.
+Official AdGuard / Amnezia / WireGuard clients. See `docs/adguard/`, `docs/amnezia/`.
