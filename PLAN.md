@@ -1,7 +1,14 @@
 # Project plan
 
-Full: [docs/PLAN-goclaw-integration.md](docs/PLAN-goclaw-integration.md)  
-USB 32 GB: [docs/USB-CAPACITY.md](docs/USB-CAPACITY.md)
+Canonical: **[docs/PLAN-goclaw-integration.md](docs/PLAN-goclaw-integration.md)**
 
-**A–D done.** **E next.**  
-Stick can hold full model + full Human20 skill trees; git stays slim.
+| Area | Status |
+|------|--------|
+| A–D shell, providers, fetch, procedures | **Done** |
+| `.env` on USB + Perplexity | **Done** |
+| Offline docs + GoClaw mirror script | **Done** |
+| 32 GB full-stick policy | **Done** |
+| **E** bootstrap/loader/vendor defaults | **Next** |
+| F–I mirrors++, runtime, Win, QA | Planned |
+
+USB capacity: [docs/USB-CAPACITY.md](docs/USB-CAPACITY.md) · Secrets: [docs/SECRETS.md](docs/SECRETS.md)

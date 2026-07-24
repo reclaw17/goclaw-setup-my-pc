@@ -1,19 +1,28 @@
 # STATUS
 
-**Date:** 2026-07-24
+**Date:** 2026-07-24 · Plan synced with repo
 
-## USB 32 GB policy
+## Done
 
-- **`.env` on stick** with model + **Perplexity** keys ([docs/SECRETS.md](docs/SECRETS.md))  
-- **Full offline docs** including **GoClaw** mirror: `bash scripts/fetch-offline-docs.sh`  
-- Full skills on stick via `fetch-human20-skill.sh`  
-- Git never gets `.env`, AppImage, GGUF, or `docs/mirrors/`  
+- Phases **A–D** (USB shell, providers, slim git, procedures, Fabric/model fetch)  
+- **`.env` on USB** — models + **Perplexity** ([SECRETS.md](docs/SECRETS.md))  
+- **Offline docs** incl. GoClaw: `bash scripts/fetch-offline-docs.sh`  
+- 32 GB policy: full skills/model/docs on stick OK  
+- Linux AppImage = gap-fill for upstream Lite  
+- Skills = procedure pack in git; full Human20 via `fetch-human20-skill.sh`  
 
-## A–D done · E next
+## Next — Phase E
+
+1. Wire `bootstrap/` into GoClaw Lite workspace  
+2. Skill loader path / frontmatter  
+3. Default vendor shortlist on prepare  
+
+## Run
 
 ```bash
+git pull
 FETCH_OFFLINE=1 bash prepare.sh
 bash scripts/fetch-offline-docs.sh
-cp -n .env.example .env
+cp -n .env.example .env   # keys on USB only
 bash start.sh
 ```

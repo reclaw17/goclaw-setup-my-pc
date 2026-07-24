@@ -1,68 +1,70 @@
 # Plan: GoClaw Lite → USB agent (goclaw-setup-my-pc)
 
-Updated: **2026-07-24** — USB kit **32 GB** (no need to skimp on stick contents)
+**Updated:** 2026-07-24 (synced with repo reality)
 
 ## Repos
 
 | Repo | Role |
 |------|------|
-| [goclaw-lite-cachyos](https://github.com/reclaw17/goclaw-lite-cachyos) | Linux AppImage factory (upstream Lite is macOS-only) |
+| [goclaw-lite-cachyos](https://github.com/reclaw17/goclaw-lite-cachyos) | Linux AppImage factory (upstream Lite = macOS-only) |
 | [goclaw-setup-my-pc](https://github.com/reclaw17/goclaw-setup-my-pc) | USB agent |
-| [nextlevelbuilder/goclaw](https://github.com/nextlevelbuilder/goclaw) | Upstream |
+| [nextlevelbuilder/goclaw](https://github.com/nextlevelbuilder/goclaw) | Upstream engine + docs |
 
 ## Product rules
 
 - Non-developer user; Grok leads  
-- Secrets only `.env` / UI — never git  
-- Cloud primary; Fabric offline fallback  
+- **`.env` on the USB stick** — model keys + **Perplexity**; never commit real `.env`  
+- Cloud primary; Fabric only offline  
 - Local model class: ~8 GB VRAM / 16 GB RAM  
-- **USB ~32 GB:** put **full** offline stack + **full** useful Human20 skill trees on the stick  
-- **Git stays slim:** no AppImage/GGUF/vendor clones in the repo  
+- **USB ~32 GB:** full offline stack, full useful Human20 trees, full offline docs (incl. GoClaw)  
+- **Git slim:** no AppImage / GGUF / `skills/vendor` / `docs/mirrors` / `.env`  
 
-See [USB-CAPACITY.md](USB-CAPACITY.md).
+Refs: [USB-CAPACITY.md](USB-CAPACITY.md) · [SECRETS.md](SECRETS.md) · [OFFLINE-DOCS.md](OFFLINE-DOCS.md)
 
 ## Order
 
 1. Shell around Lite  
-2. Then skills / docs / Fabric — **full content on USB OK**  
+2. Then skills / docs / Fabric on the stick  
 
 ---
 
-## Phases
+## Phase status (actual)
 
-| Phase | Status |
-|-------|--------|
-| A USB shell | **Done** |
-| B Providers | **Done** |
-| C Slim git / fat USB | **Done** (policy clarified for 32 GB) |
-| D Procedures + fetch scripts | **Done** |
-| E Bootstrap + loader + **vendor full skills on stick** | **Next** |
-| F Doc mirrors (chip-docs-local) on stick | Planned |
-| G Runtime wiring | Planned |
-| H Windows honest track | Planned |
-| I Cleanup + device QA | Planned |
+| Phase | Status | Notes |
+|-------|--------|--------|
+| **A** USB shell | **Done** | prepare/start/update, AppImage fetch |
+| **B** Providers | **Done** | Grok / OpenRouter / Fabric + PROVIDERS.md |
+| **C** Slim git / fat USB | **Done** | 32 GB policy |
+| **D** Procedures + fetch scripts | **Done** | skills pack, Fabric/model SHA256 |
+| **D+** Secrets on USB | **Done** | `.env.example` + Perplexity; SECRETS.md |
+| **D+** Offline docs + GoClaw mirror | **Done (tooling)** | `fetch-offline-docs.sh` → `docs/mirrors/goclaw/` |
+| **E** Bootstrap + GoClaw skill loader + vendor-on-stick defaults | **Next** | `bootstrap/` files exist; not auto-wired into Lite yet |
+| **F** Richer mirrors via chip-docs-local | **Partial** | fetch script + vendor clone; more sites optional |
+| **G** Runtime wiring (paths, auto skills, router) | Planned | |
+| **H** Windows track | Planned | honest matrix already documented |
+| **I** Cleanup + device QA | Planned | |
 
-### E (next) — expanded for 32 GB
+### Still open (E focus)
 
-1. Bootstrap files into Lite workspace  
-2. Skill frontmatter / GoClaw loader path  
-3. On-stick defaults: fetch shortlist into `skills/vendor/`  
-   - chip-docs-local, backup-manager, auto-model-router, repo-task-proof-loop, …  
-4. `FETCH_OFFLINE=1` recommended on first prepare  
-5. Honest OS matrix in README  
+1. Apply `bootstrap/` into Lite workspace automatically or document one-click copy  
+2. YAML frontmatter + path so GoClaw can load `skills/`  
+3. Default shortlist into `skills/vendor/` on prepare (32 GB)  
+4. Optional: prompt prepare.sh for offline docs fetch  
 
 ---
 
-## Recommended first fill (32 GB stick)
+## Recommended fill (32 GB stick)
 
 ```bash
 git clone https://github.com/reclaw17/goclaw-setup-my-pc.git /media/USB/goclaw-setup-my-pc
 cd /media/USB/goclaw-setup-my-pc
 FETCH_OFFLINE=1 bash prepare.sh
+bash scripts/fetch-offline-docs.sh
 bash scripts/fetch-human20-skill.sh chip-docs-local
 bash scripts/fetch-human20-skill.sh backup-manager
 bash scripts/fetch-human20-skill.sh auto-model-router
 bash scripts/fetch-human20-skill.sh repo-task-proof-loop
-cp -n .env.example .env   # XAI_API_KEY=...
+cp -n .env.example .env
+# edit .env on USB: XAI_API_KEY, PERPLEXITY_API_KEY, …
 bash start.sh
 ```
