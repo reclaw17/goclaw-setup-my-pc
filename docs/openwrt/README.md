@@ -1,101 +1,53 @@
-# OpenWrt — offline notes
+# OpenWrt — offline notes (USB agent)
 
-Agent must prefer this folder before internet search.
+Practical checklist for the agent and user. Prefer this file before the internet.
 
-## Safety order (always)
+## Safety
+1. Backup config before changes.
+2. One change at a time.
+3. Confirm with the user before `sysupgrade`, factory reset, or WAN edits.
 
-1. SSH in as root (or configured admin)
-2. **Backup first** before any change
-3. One change at a time; verify; then next
-4. Keep a serial/console path if Wi‑Fi breaks
+## SSH
+- Default LAN: often `192.168.1.1`, user `root`
+- `ssh root@192.168.1.1`
 
 ## Backup / restore
-
-```sh
-# Create backup (download from router or copy via SCP)
-sysupgrade -b /tmp/backup-$(date +%Y%m%d).tar.gz
-
-# Restore (careful — may reboot)
-sysupgrade -r /tmp/backup-YYYYMMDD.tar.gz
+```bash
+sysupgrade -b /tmp/backup-$(date +%F).tar.gz
+scp root@192.168.1.1:/tmp/backup-*.tar.gz .
+# restore (confirm first):
+# sysupgrade -r /tmp/backup-YYYY-MM-DD.tar.gz
 ```
-
-Also export critical UCI:
-
-```sh
-uci export > /tmp/uci-export.txt
-```
+Official idea: OpenWrt backup is **configuration**, not a full disk image.
 
 ## Packages
-
-```sh
+```bash
 opkg update
 opkg list-upgradable
-# Prefer selective upgrades over blind full upgrade on production routers
-opkg install <package>
+# opkg install <pkg>   # after confirmation
 ```
 
-If `opkg update` fails: check WAN, DNS, time (`date`), and free space (`df -h`).
-
-## Network basics (UCI)
-
-```sh
-uci show network
+## Wi-Fi (UCI)
+```bash
 uci show wireless
-uci show dhcp
-uci commit
-/etc/init.d/network reload
-```
-
-### Wi‑Fi (example pattern)
-
-```sh
-uci set wireless.radio0.disabled='0'
-uci set wireless.default_radio0.ssid='MySSID'
-uci set wireless.default_radio0.key='StrongPassword'
-uci set wireless.default_radio0.encryption='sae-mixed'   # or psk2
+# edit SSID/key/country via uci set ...
 uci commit wireless
 wifi reload
 ```
 
-Exact section names differ by device — always `uci show wireless` first.
-
-### WAN / internet
-
-```sh
-uci show network.wan
+## WAN / connectivity
+```bash
+uci show network
 ifstatus wan
-ping -c 3 1.1.1.1
-ping -c 3 openwrt.org
+ping -c 2 1.1.1.1
 ```
+
+## VPN
+Prefer **WireGuard** packages + UCI. Install only after backup. Collect keys/endpoints from the user — never invent them.
 
 ## DNS
+Coordinate with AdGuard notes in `docs/adguard/`. Changing LAN DNS affects all clients — test one device first.
 
-Typical: dnsmasq on LAN. Optional upstream:
-
-- Cloudflare `1.1.1.1`
-- AdGuard DNS (if used with AdGuard Home elsewhere)
-
-```sh
-uci show dhcp.@dnsmasq[0]
-```
-
-## VPN (WireGuard sketch)
-
-1. Install `wireguard-tools` / `kmod-wireguard` if missing
-2. Create interface + peer via UCI or `/etc/config/network`
-3. Firewall zone: VPN traffic allowed as intended (LAN→VPN or selective)
-4. Test with `wg show` and external IP check
-
-Prefer vendor/docs for Amnezia if that stack is required — see `docs/amnezia/`.
-
-## Recovery ideas
-
-- Failsafe mode / reset button (device-specific)
-- Restore backup
-- Serial console if soft-bricked Wi‑Fi/firewall
-
-## Agent rules
-
-- Never wipe config without explicit user confirm + backup
-- Quote exact commands before running destructive ones
-- After network changes: verify `ping`, `ifstatus`, client connectivity
+## References (when online)
+- https://openwrt.org/docs/guide-user/troubleshooting/backup_restore
+- https://openwrt.org/docs/guide-user/network/wifi/basic

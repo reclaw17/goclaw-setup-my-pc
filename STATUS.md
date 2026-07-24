@@ -2,33 +2,36 @@
 
 **Date:** 2026-07-24
 
-## Phase A — USB shell — DONE
-AppImage fetch/start/update, `.env.example`, gitignore.
+## Phases
 
-## Phase B — Providers — DONE
-Grok / OpenRouter / Fabric presets + [docs/PROVIDERS.md](docs/PROVIDERS.md).
-
-## Phase D — Skills pass — DONE (docs/skills layer)
-
-| Skill | Notes |
+| Phase | Status |
 |-------|--------|
-| openwrt | Backup-first router workflow |
-| pc-setup | Arch/CachyOS + Win11 |
-| amnezia-adguard | New |
-| fabric-offline | 8GB VRAM offline path |
-| INDEX/README | Updated |
+| A USB shell + AppImage | **Done** |
+| B Provider presets | **Done** |
+| C No 120MB binary in git | **Done** |
+| D Skills + docs + offline fetch + Win honesty | **Done (this pass)** |
 
-## Still open (Phase D implementation)
-- Real offline doc bodies under `docs/**`
-- Fabric + GGUF download with checksum
-- Win11 test pass
+## Phase D deliverables
 
-## Run
+- Real offline notes: `docs/openwrt`, `cachyos-arch`, `windows11`, `adguard`, `amnezia`
+- `scripts/fetch-model.sh` — SHA256 pinned
+- `scripts/fetch-fabric.sh` — Fabric/llama Vulkan b7349 + SHA
+- `scripts/fetch-offline-stack.sh` — both
+- Windows: `prepare.bat` / `launcher/start-windows.bat` + `scripts/fetch-goclaw-windows.md` (GUI = Linux AppImage; Win = Fabric/model + honest limits)
+
+## Run (Linux — primary)
 
 ```bash
 bash prepare.sh
-cp -n .env.example .env   # XAI_API_KEY=...
+cp -n .env.example .env   # XAI_API_KEY=
 bash start.sh
+# optional offline stack:
+bash scripts/fetch-offline-stack.sh
 ```
 
-Packaging: https://github.com/reclaw17/goclaw-lite-cachyos/releases/tag/v0.2.0-cachyos
+## Run (Windows 11)
+
+```bat
+prepare.bat
+REM Full GoClaw GUI still Linux-first — see scripts\fetch-goclaw-windows.md
+```

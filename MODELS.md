@@ -1,32 +1,36 @@
 # Models
 
-## Cloud models (primary)
+## Cloud (primary — online)
 
-1. **Grok 4.5**
-2. **Qwen 3.8**
-3. **Minimax M2.7**
+1. **Grok** (xAI) — default in wizard  
+2. **Qwen** via OpenRouter / vendor API  
+3. **Minimax** (optional)
 
-These are used when internet is available.
+See [docs/PROVIDERS.md](docs/PROVIDERS.md).
 
----
+## Local (fallback — offline only)
 
-## Local model (fallback only)
+| Item | Value |
+|------|--------|
+| Model | Qwen3.5-9B Q4_K_M |
+| File | `models/qwen3.5-9b-q4_k_m.gguf` |
+| SHA256 | `03b74727a860a56338e042c4420bb3f04b2fec5734175f4cb9fa853daf52b7e8` |
+| Source | Hugging Face `unsloth/Qwen3.5-9B-GGUF` |
+| Target HW | ~8 GB VRAM + 16 GB RAM |
 
-**Primary choice:** `Qwen3.5-9B`  
-**Quantization:** `Q4_K_M` (preferred) or `Q5_K_M`
+### Download (Linux)
 
-### Why this model
-- Best quality/performance balance for 8 GB VRAM + 16 GB RAM
-- Strong coding ability
-- Good reasoning for system configuration tasks
-- Fits comfortably in 8 GB VRAM (~6.5–7.5 GB)
-- Works well with Fabric / llama.cpp
-
-### Usage rule
-Local model is used **only** when there is no internet connection.
-
-### File location on USB
+```bash
+bash scripts/fetch-model.sh
+bash scripts/fetch-fabric.sh
+# or both:
+bash scripts/fetch-offline-stack.sh
 ```
-models/
-└── qwen3.5-9b-q4_k_m.gguf
+
+### Run local server (example)
+
+```bash
+./fabric/llama-server -m models/qwen3.5-9b-q4_k_m.gguf --host 127.0.0.1 --port 8080
 ```
+
+GoClaw provider: OpenAI-compatible `http://127.0.0.1:8080/v1`.

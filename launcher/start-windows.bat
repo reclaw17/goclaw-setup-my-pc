@@ -5,23 +5,10 @@ cd /d "%~dp0.."
 set "ROOT=%cd%"
 
 echo ==============================================
-echo  goclaw-setup-my-pc
-echo  Portable AI Agent — Windows
+echo  goclaw-setup-my-pc — Windows launcher
 echo ==============================================
-echo Папка: %ROOT%
+echo Folder: %ROOT%
 echo.
-
-if not exist "%ROOT%\goclaw\goclaw-windows.exe" (
-  echo ==^> Ошибка: нет goclaw\goclaw-windows.exe
-  echo ==^> Официальный Windows-бинарник GoClaw пока может отсутствовать.
-  echo ==^> На Linux путь уже рабочий.
-  pause
-  exit /b 1
-)
-
-if not exist "%ROOT%\models\qwen3.5-9b-q4_k_m.gguf" (
-  echo ==^> Локальной модели нет. Скачаю при первом offline-запуске через подготовить.
-)
 
 if exist "%ROOT%\.env" (
   for /f "usebackq tokens=* delims=" %%A in ("%ROOT%\.env") do (
@@ -29,13 +16,25 @@ if exist "%ROOT%\.env" (
   )
 )
 
-echo ==^> Запускаю GoClaw...
-echo.
-"%ROOT%\goclaw\goclaw-windows.exe"
-if errorlevel 1 (
-  echo ==^> GoClaw завершился с ошибкой
-  pause
-  exit /b 1
+if exist "%ROOT%\goclaw\goclaw-windows.exe" (
+  echo ==^> Starting goclaw-windows.exe
+  "%ROOT%\goclaw\goclaw-windows.exe"
+  goto end
 )
 
-endlocal
+echo ==^> No goclaw-windows.exe (upstream Lite Windows AppImage is not available).
+echo ==^> Full agent GUI: use Linux + apps\GoClaw-Lite-x86_64.AppImage
+echo ==^> Docs: scripts\fetch-goclaw-windows.md
+echo.
+if exist "%ROOT%\fabric\win" (
+  echo ==^> Fabric win folder exists — you can start llama-server manually on :8080
+)
+if exist "%ROOT%\models\qwen3.5-9b-q4_k_m.gguf" (
+  echo ==^> Local model file is present under models\
+)
+echo.
+echo ==^> Online: put XAI_API_KEY in .env and use cloud clients until Windows GUI exists.
+echo.
+
+:end
+pause
