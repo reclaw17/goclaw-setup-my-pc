@@ -1,43 +1,31 @@
-# How programs are embedded in this project
+# How programs live on the USB
 
-Binaries are **part of the USB/project layout**, but **not stored in git** (too large).
+**Git is slim. The 32 GB stick is not.**
 
-## Layout after prepare
+Binaries and full skill trees are **downloaded onto the project folder / USB**, not stored in git.
+
+## Layout
 
 ```text
-project-or-USB/
-  apps/
-    GoClaw-Lite-x86_64.AppImage     ← Linux GUI agent (from goclaw-lite-cachyos)
-  fabric/
-    fabric-linux                    ← local OpenAI-compatible server (Linux)
-    win/…                           ← Windows llama/Fabric build (optional)
-  models/
-    qwen3.5-9b-q4_k_m.gguf          ← offline model (~Q4 9B)
-  goclaw/                           ← optional legacy/upstream CLI bits
-  .env                              ← secrets (local only)
+USB/project/
+  apps/GoClaw-Lite-x86_64.AppImage     # ~120 MB
+  fabric/fabric-linux                  # offline server
+  fabric/win/…                         # optional Windows
+  models/qwen3.5-9b-q4_k_m.gguf      # ~5–6 GB OK on 32 GB stick
+  skills/*/SKILL.md                    # procedure pack (in git)
+  skills/vendor/<slug>/                # FULL upstream skills (on stick)
+  docs/ + docs/mirrors/                # notes + optional big mirrors
+  bootstrap/                           # AGENTS/SOUL/TOOLS for Lite
+  .env                                 # secrets local only
 ```
 
-## Fetch commands
+## Fetch
 
-| Component | Command |
-|-----------|---------|
-| GoClaw Lite AppImage (Linux) | `bash scripts/fetch-goclaw-appimage.sh` or `bash prepare.sh` |
-| Fabric Linux | `bash scripts/fetch-fabric.sh linux` |
-| Fabric Windows zip | `bash scripts/fetch-fabric.sh windows` |
-| GGUF model + SHA256 | `bash scripts/fetch-model.sh` |
-| Fabric + model | `bash scripts/fetch-offline-stack.sh linux` |
+```bash
+bash prepare.sh                        # AppImage; ask offline stack
+FETCH_OFFLINE=1 bash prepare.sh        # AppImage + Fabric + model
+bash scripts/fetch-human20-skill.sh list
+bash scripts/fetch-human20-skill.sh chip-docs-local
+```
 
-Optional full helper: `FETCH_BINARIES=1 PREFETCH_MODEL=1 bash scripts/prepare-usb.sh .`
-
-## Platform honesty
-
-| OS | GoClaw GUI | Offline LLM |
-|----|------------|-------------|
-| **Linux (Arch/CachyOS)** | **Yes** — AppImage in `apps/` | Fabric + model |
-| **Windows 11** | No official Lite AppImage in our factory yet | Fabric/llama under `fabric/win` + cloud API keys in `.env` |
-
-Windows users: run `prepare.bat` / place binaries under `fabric\win`, use cloud Grok in any OpenAI-compatible client, or WSL2 + Linux AppImage.
-
-## Git rules
-
-Ignored: `apps/*.AppImage`, `models/*.gguf`, fabric binaries, `.env`.
+Capacity policy: [USB-CAPACITY.md](USB-CAPACITY.md).

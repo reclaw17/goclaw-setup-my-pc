@@ -1,32 +1,29 @@
 # STATUS
 
-**Date:** 2026-07-24 (post Human20 + upstream audit)
+**Date:** 2026-07-24
 
-## Phases A–D — shell done
+## Capacity
 
-USB AppImage path, providers, skills procedure pack, Fabric/model fetch, docs stubs.
+USB kit **32 GB** — full offline stack + full useful Human20 skill clones **on the stick** are OK.  
+Git remains without AppImage/GGUF/vendor. Policy: [docs/USB-CAPACITY.md](docs/USB-CAPACITY.md).
 
-## Audit corrections applied
+## Phases A–D — done
 
-See **[docs/AUDIT-2026-07-24.md](docs/AUDIT-2026-07-24.md)**:
+Shell, providers, fetch scripts, procedure pack.
 
-- Official Lite install = **macOS**; Linux AppImage remains our gap-fill  
-- Skills = procedure pack ≠ full Human20/GoClaw-native skill bundles yet  
-- Added `bootstrap/` (AGENTS/SOUL/TOOLS) for Lite workspace  
-- Human20 catalog mapping: `docs/HUMAN20-SKILLS.md`  
-- Windows claims toned down to match upstream release reality  
+## Skills policy
 
-## Priority next fixes
+- **Procedure pack** in git (`skills/*/SKILL.md`) — always  
+- **Full skills** on USB via `scripts/fetch-human20-skill.sh` — **encouraged** (32 GB)  
 
-1. Wire `skills/` + `bootstrap/` into GoClaw Lite workspace path (native loader)  
-2. `scripts/fetch-human20-skill.sh` for chip-docs-local / clawguard zips  
-3. Optional deeper offline mirrors via chip-docs-local  
-4. Watch upstream for Windows `lite-v*` assets  
+## Next (E)
 
-## Run (Linux)
+Bootstrap + loader wiring + default vendor shortlist on stick.
+
+## Run
 
 ```bash
-bash prepare.sh
-# .env → XAI_API_KEY=
+FETCH_OFFLINE=1 bash prepare.sh
+bash scripts/fetch-human20-skill.sh chip-docs-local
 bash start.sh
 ```
