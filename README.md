@@ -3,9 +3,9 @@
 Portable AI agent for PC + OpenWrt setup from a USB stick.
 
 **Engine:** [GoClaw Lite AppImage](https://github.com/reclaw17/goclaw-lite-cachyos) (SQLite)  
-**Latest:** [v0.2.0-cachyos](https://github.com/reclaw17/goclaw-lite-cachyos/releases/tag/v0.2.0-cachyos)
+**Latest AppImage:** [v0.2.0-cachyos](https://github.com/reclaw17/goclaw-lite-cachyos/releases/tag/v0.2.0-cachyos)
 
-**Repo rules:** English-first · English file names · Issues in English (preferred) · language menu inside scripts — [docs/REPO-RULES.md](docs/REPO-RULES.md)
+**Phase A (USB shell): done** — prepare → start → update around the AppImage.
 
 ---
 
@@ -16,24 +16,32 @@ Portable AI agent for PC + OpenWrt setup from a USB stick.
 ```bash
 git clone https://github.com/reclaw17/goclaw-setup-my-pc.git
 cd goclaw-setup-my-pc
-bash prepare.sh      # language menu: 1=EN (default), 2=RU
-# edit .env → XAI_API_KEY=...
+bash prepare.sh      # 1=English (default), 2=Russian — downloads AppImage to apps/
+# copy secrets:
+cp -n .env.example .env
+# edit .env → set XAI_API_KEY=...
 bash start.sh
 bash update.sh       # later
 ```
 
-Legacy Russian script names still work (`подготовить.sh` → calls `prepare.sh`).
+Provider hints: `config/providers.example.json` (use in GoClaw wizard).  
+USB layout: [USB-STRUCTURE.md](USB-STRUCTURE.md) · Status: [STATUS.md](STATUS.md) · Plan: [PLAN.md](PLAN.md)
+
+Do **not** commit `apps/*.AppImage` or real `.env`.
 
 ---
 
 ## Russian
 
 ```bash
-bash prepare.sh      # выбери 2 для русского UI скрипта
+git clone https://github.com/reclaw17/goclaw-setup-my-pc.git
+cd goclaw-setup-my-pc
+bash prepare.sh      # язык: 2 = русский; скачает AppImage в apps/
+cp -n .env.example .env
+# впиши XAI_API_KEY в .env
 bash start.sh
 bash update.sh
 ```
 
-Имена файлов в репо — **английские**. Русские `старт.sh` и т.п. — только обёртки.
-
-Правила: [docs/REPO-RULES.md](docs/REPO-RULES.md)
+Пресеты провайдеров: `config/providers.example.json`.  
+Структура флешки: [USB-STRUCTURE.md](USB-STRUCTURE.md).

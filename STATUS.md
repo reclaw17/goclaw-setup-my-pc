@@ -2,20 +2,36 @@
 
 **Date:** 2026-07-24
 
-## Done (Phase A)
+## Phase A — USB shell around GoClaw Lite — DONE
 
-- Primary engine: **GoClaw Lite AppImage** (`apps/GoClaw-Lite-x86_64.AppImage`)
-- Source release: [v0.2.0-cachyos](https://github.com/reclaw17/goclaw-lite-cachyos/releases/tag/v0.2.0-cachyos)
-- `scripts/fetch-goclaw-appimage.sh` / `scripts/update-goclaw.sh`
-- `launcher/start-linux.sh` prefers AppImage over old `goclaw/goclaw-linux`
-- Beginner scripts: `подготовить.sh` → `старт.sh` → `обновить.sh`
-- `.env.example` without required PostgreSQL
+| Item | Status |
+|------|--------|
+| Engine = Lite AppImage in `apps/` | Done |
+| Fetch from lite Releases (`v0.2.0-cachyos`) | `prepare.sh` / `scripts/fetch-goclaw-appimage.sh` |
+| Start | `start.sh` → `launcher/start-linux.sh` |
+| Update | `update.sh` / `scripts/update-goclaw.sh` |
+| Secrets template | `.env.example` (no keys in git) |
+| AppImage not in git | `.gitignore` |
+| USB tree doc | `USB-STRUCTURE.md` |
+| Provider preset hints | `config/providers.example.json` |
+
+## How to run (user)
+
+```bash
+git clone https://github.com/reclaw17/goclaw-setup-my-pc.git
+cd goclaw-setup-my-pc
+bash prepare.sh    # downloads AppImage into apps/
+# edit .env → XAI_API_KEY=...
+bash start.sh
+bash update.sh     # later
+```
 
 ## Next
 
-- Phase B: provider preset notes for Grok / Qwen / local Fabric in docs
-- Phase D: skills hardening, offline docs pack, Fabric auto-download polish, Win11 path
+- Phase B polish: docs for wizard mapping Grok / Qwen / Fabric  
+- Phase D: skills, offline docs pack, Fabric model download, Win11  
 
-## Packaging repo
+## Related
 
-https://github.com/reclaw17/goclaw-lite-cachyos — AppImage factory only (finalized for community use).
+- Packaging factory: https://github.com/reclaw17/goclaw-lite-cachyos  
+- Integration plan: [docs/PLAN-goclaw-integration.md](docs/PLAN-goclaw-integration.md)  

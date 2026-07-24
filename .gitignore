@@ -3,6 +3,11 @@
 *.env
 !.env.example
 
+# GoClaw AppImage (download via prepare.sh / fetch — do not commit ~120MB)
+apps/*.AppImage
+apps/*.AppImage.bak*
+apps/.goclaw-lite-version
+
 # Models (too large for git)
 models/
 *.gguf

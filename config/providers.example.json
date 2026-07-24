@@ -1,0 +1,30 @@
+{
+  "_comment": "Copy ideas into GoClaw setup wizard. Do not put real API keys here.",
+  "presets": [
+    {
+      "id": "grok-xai",
+      "name": "xai",
+      "type": "xAI (Grok)",
+      "base_url": "https://api.x.ai/v1",
+      "api_key_env": "XAI_API_KEY",
+      "role": "primary online"
+    },
+    {
+      "id": "openrouter",
+      "name": "openrouter",
+      "type": "OpenAI-compatible",
+      "base_url": "https://openrouter.ai/api/v1",
+      "api_key_env": "OPENROUTER_API_KEY",
+      "role": "cloud backup"
+    },
+    {
+      "id": "local-fabric",
+      "name": "local-fabric",
+      "type": "OpenAI-compatible",
+      "base_url": "http://127.0.0.1:8080/v1",
+      "api_key_env": "LOCAL_LLM_API_KEY",
+      "api_key_hint": "sk-local",
+      "role": "offline fallback (Fabric)"
+    }
+  ]
+}
