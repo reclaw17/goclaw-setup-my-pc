@@ -3,10 +3,13 @@
 *.env
 !.env.example
 
-# GoClaw AppImage (download via prepare.sh / fetch — do not commit ~120MB)
+# GoClaw AppImage (download via prepare.sh — do not commit ~120MB)
 apps/*.AppImage
 apps/*.AppImage.bak*
 apps/.goclaw-lite-version
+
+# Full Human20 / upstream skill clones (optional)
+skills/vendor/
 
 # Models (too large for git)
 models/
@@ -14,36 +17,32 @@ models/
 *.bin
 *.safetensors
 
-# Fabric binaries (platform specific)
+# Fabric binaries
 fabric/bin/
 fabric/*.exe
 fabric/*-linux
 fabric/*-windows*
+fabric/win/
 
-# OS files
+# Huge doc mirrors (chip-docs-local output)
+docs/mirrors/
+
+# OS / editor
 .DS_Store
 Thumbs.db
 Desktop.ini
-
-# Editor / IDE
 .vscode/
 .idea/
 *.swp
 *.swo
-
-# Temporary
 tmp/
 temp/
 *.tmp
 *.log
-
-# Node / Python (if any)
 node_modules/
 __pycache__/
 *.pyc
 .venv/
 venv/
-
-# Build artifacts
 dist/
 build/

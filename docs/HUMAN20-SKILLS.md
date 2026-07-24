@@ -1,26 +1,33 @@
-# Human20 skills archive (source of truth for catalog)
+# Human20 skills vs this repo
 
-Archive used: `human20mcp-20260722.zip`  
-- `human20mcp/skills/*.md` — 235 **cards** (summary + GitHub/zip links)  
-- `human20mcp/h20-curs/` — course ops knowledge (Cursor/workshop), forum index, transcripts meta  
+## Archive
 
-## Important
+`human20mcp-20260722.zip`:
 
-Cards are **not** full skill implementations. Full code lives at each card’s GitHub/zip URL.
+- **235 cards** — summary, tags, GitHub/zip links  
+- **Not** full skill implementations inside the zip  
+- `h20-curs/` — workshop/Cursor ops knowledge  
 
-## Product shortlist → upstream
+## Two layers in goclaw-setup-my-pc
 
-| Need | Human20 slug | Upstream |
-|------|----------------|----------|
-| Offline docs mirrors | `chip-docs-local` | https://github.com/evgyur/chip-docs-local |
-| Model routing | `auto-model-router` | https://github.com/JoyyyceD/auto-model-router |
-| Backups | `backup-manager` | https://github.com/ppopen/backup-manager |
-| Safety | `clawguard` | (see card in archive) |
-| Coding discipline | `workshop-shaw-coding-standard` | Human20 workshop zip |
-| Proof loop | `repo-task-proof-loop` | https://github.com/DenisSergeevitch/repo-task-proof-loop |
-| Web research | `workshop-perplex-search` | Human20 workshop zip |
+| Layer | Path | Meaning |
+|-------|------|---------|
+| **Procedure pack (v1)** | `skills/*/SKILL.md` | Our short playbooks for PC/router USB agent |
+| **Full upstream skills** | `skills/vendor/<slug>/` after fetch | Real GitHub trees from Human20 cards |
 
-## This repo’s `skills/`
+```bash
+bash scripts/fetch-human20-skill.sh list
+bash scripts/fetch-human20-skill.sh chip-docs-local
+```
 
-Hand-written **procedure pack** for PC/router USB agent (openwrt, pc-setup, …).  
-Next step: optional `scripts/fetch-human20-skill.sh` to pull selected zips into `skills/vendor/` (gitignored if large).
+## Shortlist
+
+| Need | Slug | Fetch |
+|------|------|--------|
+| Offline doc mirrors | chip-docs-local | `fetch-human20-skill.sh chip-docs-local` |
+| Model routing ideas | auto-model-router | yes |
+| Backups | backup-manager | yes |
+| Proof loop | repo-task-proof-loop | yes |
+| Safety / coding workshop | clawguard, workshop-* | card in archive; add URL when needed |
+
+Procedure pack stays the default for the agent. Vendor trees are optional power-ups (Phase E).
